@@ -25,6 +25,7 @@ const UserController = function () {
       case "ADMIN":
         UserModel.findOne(conditions).exec(function(err, user) {
           if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
+          console.log('user', user)
           if (!user) return res.status(403).json({success: false, message: 'Invalid username / password'}); 
 
           const updatedUser = { 

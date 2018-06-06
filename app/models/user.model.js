@@ -7,8 +7,9 @@ var Schema = mongoose.Schema;
 var UsersSchema = new Schema({
     name: String,
     username: String,
-    institute: String,
-    role: String
+    password: String,
+    role: String,
+    isAvailable : Boolean,
 }, { collection: 'users' });
 
 var UserModel = db.model('users', UsersSchema );
