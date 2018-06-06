@@ -1,0 +1,96 @@
+const express = require('express'); 
+//require multer for the file uploads
+var multer = require('multer');
+// set the directory for the uploads to the uploaded to
+var DIR = '../Images/';
+
+var UserController = require('../controllers/user.controller')();
+var InstituteController = require('../controllers/institute.controller')();
+var SchoolController = require('../controllers/school.controller')();
+var StaffController = require('../controllers/staff.controller')();
+var StudentController = require('../controllers/student.controller')();
+var ClassesController = require('../controllers/classes.controller')();
+var TimelineController = require('../controllers/timeline.controller')();
+var LeaveController = require('../controllers/leave.controller')();
+var AttendanceController = require('../controllers/attendance.controller')();
+var ExamsController = require('../controllers/exams.controller')();
+var MarksController = require('../controllers/marks.controller')();
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, DIR); // Absolute path. Folder must exist, will not be created for you.
+  },
+  filename: function (req, file, cb) {
+    console.log(file);
+    console.log(req.body);
+    
+    let extArray = file.mimetype.split("/");
+    let extension = extArray[extArray.length - 1];
+    cb(null, file.fieldname +'.' +extension);
+  }
+})
+
+var upload = multer({ storage: storage })
+var cpUpload = upload.fields([{ name: 'photo', maxCount: 1 }])
+
+var routes = function(){
+    let router = express.Router(); // get an instance of the express Router
+   
+    router.get('/', UserController.getUserDetails);
+    router.get('/status', UserController.validateToken);
+    router.get('/getInstitutes', InstituteController.getInstitutes);
+    router.get('/getClassesList', ClassesController.getClassesList);
+    router.get('/getSubjectsList', ClassesController.getSubjectsList);
+    router.get('/getHoursList', ClassesController.getHoursList);
+    router.get('/getSchools', SchoolController.getSchools);
+    router.get('/getStaffList', StaffController.getStaffList);
+    router.get('/getStudentsList', StudentController.getStudentsList);
+    router.get('/getTimelineEvents', TimelineController.getTimelineEvents);
+    router.get('/getLeavesList', LeaveController.getLeavesList);
+    router.get('/getAttendance', AttendanceController.getAttendance);
+    router.get('/getExamsList', ExamsController.getExamsList);
+    router.get('/getMarksList', MarksController.getMarksList);
+
+    router.get('/instAvailStaus', InstituteController.instAvailStaus);
+    router.get('/schAvailStaus', SchoolController.schAvailStaus);
+    router.get('/stfAvailStaus', StaffController.stfAvailStaus);
+    router.get('/stuAvailStaus', StudentController.stuAvailStaus);
+    
+    router.put('/removeInstitute', InstituteController.removeInstitute);
+    router.put('/removeSchool', SchoolController.removeSchool);
+    router.put('/removeStaff', StaffController.removeStaff);
+    router.put('/removeClass', ClassesController.removeClass);
+    router.put('/removeSubject', ClassesController.removeSubject);
+    router.put('/removeHour', ClassesController.removeHour);
+    
+    router.put('/resetInstPassword', InstituteController.resetInstPassword);
+    router.put('/resetSchPassword', SchoolController.resetSchPassword);
+    router.put('/resetStfPassword', StaffController.resetStfPassword);
+    router.put('/resetStuPassword', StudentController.resetStuPassword);
+   
+    router.post('/authenticate', UserController.authenticateUser);    
+    router.post('/addInstitute', InstituteController.addInstitute); 
+    router.post('/addClass', ClassesController.addClass);    
+    router.post('/addSubject', ClassesController.addSubject);
+    router.post('/removeEntry', ClassesController.removeEntry);
+    router.post('/addNewHour', ClassesController.addNewHour);
+    router.post('/addAcadamicSetup', ClassesController.addAcadamicSetup);                    
+    router.post('/saveTimeTableInfo', ClassesController.saveTimeTableInfo);                    
+    router.post('/addSchool', SchoolController.addSchool);    
+    router.post('/addStaff', StaffController.addStaff);    
+    router.post('/addStudent', StudentController.addStudent);    
+    router.post('/addTimelineEvent', TimelineController.addTimelineEvent);    
+    router.post('/applyLeave', LeaveController.applyLeave);    
+    router.post('/addAttendance', AttendanceController.addAttendance);    
+    router.post('/addExam', ExamsController.addExam);    
+    router.post('/addStudentMarks', MarksController.addStudentMarks);    
+      
+    router.post('/upload', cpUpload, function (req, res, next) {
+        var path = '';
+        console.log('Req =====>');
+        console.log(req.body);
+        res.json({succes: true, message: 'File uploaded successfully'})           
+   })
+    return router;
+}
+module.exports = routes;

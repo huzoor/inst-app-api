@@ -1,2 +1,2 @@
-# inst-app-api
-inst-app-api
+# inst-api-users
+Institute Application 'USERS' API 
