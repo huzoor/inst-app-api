@@ -1,8 +1,12 @@
 var jwt    = require('jsonwebtoken');
 const InstituteModel = require('../models/institute.model');
+const GalleryModel = require('../models/gallery.model');
 const appUtilMethods = require('./apputils');
 const ObjectId = require('mongoose').Types.ObjectId;
 const request = require('request');
+let multer = require('multer'); //require multer for the file uploads
+let fs = require('fs');
+let DIR = __basedir +"/assets/uploads/"; // set the directory for the uploads to assest/uploads folder
 require('dotenv').config(); //importing node config
 
 // Error handling
@@ -71,6 +75,7 @@ const InstituteController = function () {
           const restPassURL = `${process.env.WEB_END_URI}username=${userName}-INST&amp;type=Inst`;
           // const messageText = `Reset Your Password using \n ${restPassURL}`;
           const endUrl = `${process.env.SMS_END_URI}&phone=${mobile}&text=${messageText}`;
+          console.log('endUrl', endUrl)
           request(endUrl, { json: true }, (mErr, mRes, mBody) => {
               if (err) { return console.log(mErr); }
               console.log('mRes, mBody', mBody)
@@ -169,84 +174,79 @@ const InstituteController = function () {
         })
       });
   }
- 
-  /*
-  const addClass = (req, res) => {
-    if(!req.body.userName || !req.body.className) 
-    return res.status(403).json({success: false, message: 'Please provide UserName & ClassName'});
-    
-    let finder = { userName : req.body.userName , 'Classes':{ $in :[req.body.className]}}
-    let condition = { userName : req.body.userName }, 
-    update = {$push:{Classes: req.body.className }},
-    options = { multi: false };
 
-    InstituteModel.findOne( finder ).exec(function(err, classes) {
-      if (err)  return res.status(403).json({success: false, message: 'Error in updatation'})
-
-      if(!classes) {
-        InstituteModel.update(condition,update, options, function(err, user) {
-          if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
-          return res.json({  success: true, message: 'Class added successfully!!'})
+  const addToGallery = (req,res) => {
+      let currentDate = Date.now();
+        let storage = multer.diskStorage({
+          destination: function (dReq, file, cb) {
+            const currentDir = `${DIR}${dReq.body.entityType}/`;
+            if (!fs.existsSync(currentDir)){
+              fs.mkdirSync(currentDir);
+              cb(null, currentDir); // Absolute path. Folder must exist, will not be created for you.
+            } else cb(null, currentDir);
+          },
+          filename: function (fReq, file, cb) {
+            //  console.log(fReq.body, file);
+            if( !fReq.body.title || !fReq.body.description) 
+                 return res.status(403).json({success: false, message: 'please provide all the fileds of gallery form'});
+            
+            const currentDir = `${DIR}${fReq.body.entityType}/`;
+            if (!fs.existsSync(currentDir)){
+              fs.mkdirSync(currentDir);
+              let extArray = file.mimetype.split("/"),
+              extension = extArray[extArray.length - 1],
+              extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
+              cb(null, extFileName);
+            }  else {
+              let extArray = file.mimetype.split("/"),
+              extension = extArray[extArray.length - 1],
+              extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
+              cb(null, extFileName);
+            } 
+          }
         })
-      } else  return res.status(403).json({success: false, message: 'Class alredy Exists'})
+      let upload = multer({ storage : storage}).any();
+      
+      upload(req,res,function(err) {
+          if(err) {
+              console.log(err);
+              return res.status(403).json({success: false, message: 'Error in uploading'})
+          } else {
+             req.files.forEach( function(f) {
+              //  console.log(f, req.body);
+               const { title, description, entityType } = req.body;
+               let insertionDetails = { 
+                  title, 
+                  description, 
+                  entityType,
+               }
+
+               let extArray = f.mimetype.split("/"),
+               extension = extArray[extArray.length - 1],
+               image = `${entityType}-${currentDate}.${extension}`,
+               imageLocation = `uploads/${entityType}/${image}`;   
+
+               GalleryModel.create({...insertionDetails, imageLocation, image, createdOn: currentDate }, function(err, user) {
+                  if (err) return res.status(403).json({success: false, message: 'Error in upload', err})
+                  console.log("1 document inserted");
+                  return res.json({  success: true, message: 'File uploaded successfully !!'})
+                })
+              });
+          }
+      });
+       
+  }
+  
+  const getGalleryList = (req, res) =>{
+    const entityType =  req.headers['entitytype'];
+    // console.log('entityType :',entityType)
+    GalleryModel.find({ entityType }).exec(function(err, galleryList) {
+      if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Gallery List '})
+      
+      else res.json({success: true, galleryList })
     });
-
   }
 
-  const getAcadamicEntities = (req, res) =>{
-    const instituteUserName =  req.headers['instituteusername'];
-    if(!instituteUserName)  
-    return res.status(403).json({success: false, message: 'Please provide institute username'});
-
-    let condition = { userName : instituteUserName  }, 
-    options = { multi: false };
-
-    InstituteModel.find(condition).select({ "Subjects": 1, "Classes": 2}).exec(function(err, entities) {
-      if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Institutes '})
-      res.json({
-          success: true,
-          Classes: entities[0].Classes,
-          Subjects: entities[0].Subjects
-      })
-    });
-  }
-
-  const removeEntry = (req,res) =>{
-    if(!req.body.userName || !req.body.className || !req.body.removeType) 
-    return res.status(403).json({success: false, message: 'Please provide required information'});
-
-    let condition = { userName : req.body.userName }, 
-    update = (req.body.removeType === 'Class') ? {$pull:{Classes: req.body.className }} : {$pull:{Subject: req.body.className }},
-    options = { multi: false };
-
-     InstituteModel.update(condition,update, options, function(err, user) {
-        if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
-        return res.json({  success: true, message: `${req.body.removeType} Removed successfully!!`})
-      })
-  }
-
-  const addSubject = (req, res) => {
-    if(!req.body.userName || !req.body.subjectName) 
-    return res.status(403).json({success: false, message: 'Please provide UserName & subjectName'});
-    
-    let finder = { userName : req.body.userName , 'Subjects':{ $in :[req.body.subjectName]}}
-    let condition = { userName : req.body.userName }, 
-    update = {$push:{Subjects: req.body.subjectName } },
-    options = { multi: false };
-
-    InstituteModel.findOne(finder).exec(function(err, subjects) {
-      if (err)  return res.status(403).json({success: false, message: 'Error in updatation'})
-
-      if(!subjects){
-      InstituteModel.update(condition,update, options, function(err, user) {
-        if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
-        return res.json({  success: true, message: 'Subject added successfully!!'})
-      })
-    } else return res.status(403).json({success: false, message: 'Subject alredy Exists'});
-
-    })
- 
-  } */
 
   return {
     addInstitute,
@@ -254,10 +254,8 @@ const InstituteController = function () {
     removeInstitute,
     instAvailStaus,
     resetInstPassword,
-    // addClass,
-    // addSubject,
-    // removeEntry,
-    // getAcadamicEntities
+    addToGallery,
+    getGalleryList
   }
 }
 module.exports = InstituteController;

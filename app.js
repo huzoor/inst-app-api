@@ -1,14 +1,20 @@
 const express = require('express'); 
 const app = express();
 var bodyParser  = require('body-parser');
+var path=require('path');
 const db = require('./dbConnection');
 
 require('dotenv').config(); //importing node config
 const port = process.env.PORT || 26666;
 
+//To specify application root folder
+global.__basedir = __dirname;
+
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.json());       // to support JSON-encoded bodies
+app.use(express.urlencoded()); // to support URL-encoded bodies
 
 // Add headers to allow access region
 app.use(function (req, res, next) {
@@ -32,6 +38,22 @@ app.use(function (req, res, next) {
 });
 
 const router     = require('./app/routes/api-routes')(); // ROUTES FOR OUR API
+
+//TO Specify uploads folder
+let options = {
+    dotfiles: 'ignore',
+    etag: false,
+    extensions: ['htm', 'html','jpg'],
+    index: false,
+    maxAge: '1d',
+    redirect: false,
+    setHeaders: function (res, path, stat) {
+      res.set('x-timestamp', Date.now())
+    }
+  }
+  
+app.use(express.static('assets', options))
+
 // REGISTER OUR ROUTES 
 app.use('/api', router);
 

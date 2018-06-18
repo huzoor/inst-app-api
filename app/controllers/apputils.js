@@ -5,10 +5,10 @@ const appUtilMethods = function () {
   
     const sendEmail = (emailBody) =>{
         var transporter = nodemailer.createTransport({
-        service: 'gmail',
+        service: 'app3.bhashmail.com',
         auth: {
-            user: 'huzoorittech@gmail.com',
-            pass: ''
+            user: 'mschool@mavibatechnologies.com',
+            pass: 'mail@123'
         }
         });
 

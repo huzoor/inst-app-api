@@ -1,8 +1,4 @@
 const express = require('express'); 
-//require multer for the file uploads
-var multer = require('multer');
-// set the directory for the uploads to the uploaded to
-var DIR = '../Images/';
 
 var UserController = require('../controllers/user.controller')();
 var InstituteController = require('../controllers/institute.controller')();
@@ -15,23 +11,6 @@ var LeaveController = require('../controllers/leave.controller')();
 var AttendanceController = require('../controllers/attendance.controller')();
 var ExamsController = require('../controllers/exams.controller')();
 var MarksController = require('../controllers/marks.controller')();
-
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, DIR); // Absolute path. Folder must exist, will not be created for you.
-  },
-  filename: function (req, file, cb) {
-    console.log(file);
-    console.log(req.body);
-    
-    let extArray = file.mimetype.split("/");
-    let extension = extArray[extArray.length - 1];
-    cb(null, file.fieldname +'.' +extension);
-  }
-})
-
-var upload = multer({ storage: storage })
-var cpUpload = upload.fields([{ name: 'photo', maxCount: 1 }])
 
 var routes = function(){
     let router = express.Router(); // get an instance of the express Router
@@ -50,6 +29,7 @@ var routes = function(){
     router.get('/getAttendance', AttendanceController.getAttendance);
     router.get('/getExamsList', ExamsController.getExamsList);
     router.get('/getMarksList', MarksController.getMarksList);
+    router.get('/getGalleryList', InstituteController.getGalleryList);
 
     router.get('/instAvailStaus', InstituteController.instAvailStaus);
     router.get('/schAvailStaus', SchoolController.schAvailStaus);
@@ -84,13 +64,45 @@ var routes = function(){
     router.post('/addAttendance', AttendanceController.addAttendance);    
     router.post('/addExam', ExamsController.addExam);    
     router.post('/addStudentMarks', MarksController.addStudentMarks);    
+    
+    router.post('/upload', InstituteController.addToGallery);    
       
-    router.post('/upload', cpUpload, function (req, res, next) {
-        var path = '';
-        console.log('Req =====>');
-        console.log(req.body);
-        res.json({succes: true, message: 'File uploaded successfully'})           
-   })
+  //   router.post('/upload', function (req, res) {
+  //     let storage = multer.diskStorage({
+  //       destination: function (dreq, file, cb) {
+  //         cb(null, DIR); // Absolute path. Folder must exist, will not be created for you.
+  //       },
+  //       filename: function (fReq, file, cb) {
+  //         // console.log('File--------------')
+  //         //  console.log(fReq.body, file);
+          
+  //         let extArray = file.mimetype.split("/"),
+  //         extension = extArray[extArray.length - 1],
+  //         extFileName = `${file.fieldname}-${Date.now()}.${extension}`;
+  //         cb(null, extFileName);
+  //       }
+  //     })
+  //   let upload = multer({ storage : storage}).any();
+    
+  //   upload(req,res,function(err) {
+  //       if(err) {
+  //           console.log(err);
+  //           return res.status(403).json({success: false, message: 'Error in uploading'})
+  //       } else {
+  //          req.files.forEach( function(f) {
+  //            console.log(f, req.body);
+  //            let extArray = f.mimetype.split("/"),
+  //            extension = extArray[extArray.length - 1],
+  //            extFileName = `${f.fieldname}-${Date.now()}.${extension}`;
+             
+  //            // and move file to final destination...
+  //          });
+  //          return res.json({succes: true, message: 'File uploaded successfully'}) 
+  //       }
+  //   });
+  //  })
+
+
     return router;
 }
 module.exports = routes;
