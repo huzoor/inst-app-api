@@ -25,7 +25,8 @@ var StudentSchema = new Schema({
     state : String, 
     country: String,
     pinCode : String, 
-    attachments: Array,   
+    attachments: Array,  
+    isAvailable: Boolean, 
 }, { collection: 'students' });
 
 var StudentModel = db.model('students', StudentSchema );

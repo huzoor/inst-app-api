@@ -53,9 +53,19 @@ const StudentController = function () {
         }
         
         if(formMode == 'create'){
-        StudentModel.create(insertionDetails, function(err, user) {
+          const password = `stu`;
+        StudentModel.create({...insertionDetails, password}, function(err, user) {
             if (err) return res.status(403).json({success: false, message: 'Error in insertion'})
             console.log("1 document inserted");
+            const messageText = `Thanks for adding Student. Your details as follows \nUserName : ${mobile}-STU  
+            \nPassword: ${password} `;
+            const restPassURL = `${process.env.WEB_END_URI}username=${mobile}-STU&amp;type=Inst`;
+            const endUrl = `${process.env.SMS_END_URI}&phone=${mobile}&text=${messageText}`;
+            console.log('endUrl', endUrl)
+            request(endUrl, { json: true }, (mErr, mRes, mBody) => {
+            if (err) { return console.log(mErr); }
+            console.log('mRes, mBody', mBody)
+            });
             return res.json({  success: true, message: 'Document inserted successfully!!'})
           })
         } else if(formMode =='update'){
