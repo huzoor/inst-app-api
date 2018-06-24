@@ -27,7 +27,7 @@ app.use(function (req, res, next) {
 
     // Request headers you wish to allow
     res.setHeader('Access-Control-Allow-Headers', 
-    'Origin,instituteusername,instancename,schoolusername,entitytype,appliedby,classid,subjectid,classenrolled,classcode,examtype,subjectcode,createdon,X-Requested-With,Content-Type,Accept,Authorization,x-access-token');
+    'Origin,instituteusername,instancename,schoolusername,entitytype,appliedby,classid,subjectid,classenrolled,classcode,examtype,subjectcode,createdon,messageto,timelinemode,X-Requested-With,Content-Type,Accept,Authorization,x-access-token');
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)

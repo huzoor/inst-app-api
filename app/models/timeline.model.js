@@ -10,8 +10,8 @@ var TimelineSchema = new Schema({
     messageTo: String,
     instituteUserName: String,             
     schoolUserName: String,
-    instituteName: String,             
-    schoolName: String,
+    addedUser: String,  
+    addedBy: String,             
     createdOn: Date,
 }, { collection: 'timeline' });
 

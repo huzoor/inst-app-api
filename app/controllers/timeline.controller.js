@@ -40,8 +40,8 @@ const TimelineController = function () {
             messageTo,
             instituteUserName,             
             schoolUserName,
-            schoolName,
-            instituteName, 
+            addedUser,    
+            addedBy,
           } = req.body;
     if( !messageType || !message || !messageTo) 
       return res.status(403).json({success: false, message: 'please provide all the fileds'});
@@ -51,28 +51,46 @@ const TimelineController = function () {
             message,
             messageTo,
             instituteUserName,             
-            schoolUserName,
-            instituteName,             
-            schoolName,
+            schoolUserName: schoolUserName || ``,
+            addedUser,    
+            addedBy,  
             createdOn : new Date()
         }
         
         TimelineModel.create(insertionDetails, function(err, user) {
             if (err) return res.status(403).json({success: false, message: 'Error in insertion'})
             console.log("1 document inserted");
-            return res.json({  success: true, message: 'Document inserted successfully!!'})
+            return res.json({  success: true, message: 'timeline added successfully!!'})
           })
   }
 
   const getTimelineEvents =  (req, res) => {
-    const schoolUserName =  req.headers['schoolusername'];
-    const instituteUserName =  req.headers['instituteusername'];
-    if(!schoolUserName || !instituteUserName)  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
-    TimelineModel.find( { schoolUserName,instituteUserName }).sort({createdOn: -1}).exec(function(err, timeLineEvets) {
+    const schoolUserName =  req.headers['schoolusername'] || '';
+    const instituteUserName =  req.headers['instituteusername'] || '';
+    const messageTo =  req.headers['messageto']|| '';
+    const timeLineMode =  req.headers['timelinemode'] || '';
+    let condition = {}
+    if(timeLineMode  == 101) {
+      condition = { addedUser: instituteUserName }
+    } else if( timeLineMode == 102) {
+      condition = { addedUser: schoolUserName }
+    } else {
+      condition = {
+        $and : [
+            { $or : [ {"addedUser": { $eq: schoolUserName} }, {"addedUser": { $eq: instituteUserName } } ] },
+            { $or : [{"messageTo": { $eq: messageTo }}, {"messageTo": { $eq: "all" }} ] }
+        ]
+      };
+    }
+     
+    // console.log('condition', condition)
+    if(!instituteUserName && !schoolUserName)  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
+    TimelineModel.find( condition ).sort({createdOn: -1}).exec(function(err, timeLineEvets) {
         if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Timeline Events '})
         res.json({
             success: true,
-            timeLineEvets
+            timeLineEvets,
+            condition
         })
       });
   }
