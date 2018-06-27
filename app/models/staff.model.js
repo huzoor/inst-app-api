@@ -10,7 +10,7 @@ var StaffSchema = new Schema({
     password : String,  
     email : String, 
     mobile : String,
-    photoPath : String,  
+    logo : String,  
     gender: String,
     staffRole: String,
     qualification: String,

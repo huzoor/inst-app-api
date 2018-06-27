@@ -52,8 +52,8 @@ const ExamsController = function () {
         
         ExamsModel.create(insertionDetails, function(err, user) {
             if (err) return res.status(403).json({success: false, message: 'Error in insertion'})
-            console.log("1 document inserted");
-            return res.json({  success: true, message: 'Document inserted successfully!!'})
+            // console.log("1 document inserted");
+            return res.json({  success: true, message: 'Exam Added successfully!!'})
           })
   }
 

@@ -65,7 +65,13 @@ var routes = function(){
     router.post('/addExam', ExamsController.addExam);    
     router.post('/addStudentMarks', MarksController.addStudentMarks);    
     
-    router.post('/upload', InstituteController.addToGallery);    
+    router.post('/upload', InstituteController.addToGallery);  
+    
+    
+    router.post('/addImageDetails', UserController.addImageDetails);  
+    router.get('/getImageDetails', UserController.getImageDetails);  
+    
+    
       
   //   router.post('/upload', function (req, res) {
   //     let storage = multer.diskStorage({

@@ -9,7 +9,7 @@ var StudentSchema = new Schema({
     password : String,  
     email : String, 
     mobile : String,
-    photoPath : String,  
+    logo : String,  
     gender: String,
     dob: Date, 
     rollNumber: String, 

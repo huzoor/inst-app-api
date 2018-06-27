@@ -48,7 +48,7 @@ const StaffController = function () {
       return res.status(403).json({success: false, message: 'please provide all the fileds of staff form'});
       const password = 'stf';
       let insertionDetails = { 
-            schoolUserName, instituteUserName, photoPath:`Images/${userName}-STF.png`, 
+            schoolUserName, instituteUserName, logo: process.env.DEFAULT_IMAGE, 
             gender, staffRole, qualification, experience, subject: ObjectId(subject),
             yearOfPassing, address, city, district, state, country, staffName,
             userName: `${userName}-STF`, email, mobile, isAvailable : true,

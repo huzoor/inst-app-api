@@ -58,7 +58,7 @@ const InstituteController = function () {
           instituteName, 
           code, 
           registeredDate: (formMode === 'update' ? registeredDate : registeredDate.formatted), 
-          logoPath:`Images/${userName}-INST.png`, 
+          logo: process.env.DEFAULT_IMAGE, 
           address,  city, district, state, country, 
           userName: `${userName}-INST`, email, mobile,
           isAvailable: true

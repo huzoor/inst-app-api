@@ -87,7 +87,7 @@ const AttendanceController = function () {
           let updatePull = {$pull: {presentiesList:{ subjectCode , classCode }}};
           let update = {presentiesList : newUpdatedPresentiesList};
             AttendanceModel.update(condition, updatePull, {multi: true}, function(err, info){
-              console.log('info', info, { subjectCode , classCode }, updatePull, condition)
+              // console.log('info', info, { subjectCode , classCode }, updatePull, condition)
               
               AttendanceModel.update(condition,update, options, function(err, updateInfo) {
                 if (err) return res.status(403).json({success: false, message: 'Error in updatation'})

@@ -7,6 +7,7 @@ var Schema = mongoose.Schema;
 var HoursSchema = new Schema({ 
     hourName: String,
     instituteUserName: String,
+    schoolUserName: String,
     associatedWith: Array,
     startTime: Date,
     endTime: Date,

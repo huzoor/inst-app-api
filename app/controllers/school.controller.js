@@ -55,7 +55,7 @@ const SchoolController = function () {
         instituteUserName,      
         code, 
         registeredDate, 
-        logo:`Images/${userName}-SCH.png`,
+        logo: process.env.DEFAULT_IMAGE,
         address, city, district, state, country, 
         schoolAdminName, 
         userName: `${userName}-SCH`, 

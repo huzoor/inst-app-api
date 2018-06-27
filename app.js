@@ -14,7 +14,7 @@ global.__basedir = __dirname;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());       // to support JSON-encoded bodies
-app.use(express.urlencoded()); // to support URL-encoded bodies
+app.use(express.urlencoded({ extended: false })); // to support URL-encoded bodies
 
 // Add headers to allow access region
 app.use(function (req, res, next) {
@@ -27,7 +27,7 @@ app.use(function (req, res, next) {
 
     // Request headers you wish to allow
     res.setHeader('Access-Control-Allow-Headers', 
-    'Origin,instituteusername,instancename,schoolusername,entitytype,appliedby,classid,subjectid,classenrolled,classcode,examtype,subjectcode,createdon,messageto,timelinemode,X-Requested-With,Content-Type,Accept,Authorization,x-access-token');
+    'Origin,instituteusername,instancename,schoolusername,username,entitytype,appliedby,classid,subjectid,classenrolled,classcode,examtype,subjectcode,createdon,messageto,timelinemode,role,X-Requested-With,Content-Type,Accept,Authorization,x-access-token');
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)

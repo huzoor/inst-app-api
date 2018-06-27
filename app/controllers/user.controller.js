@@ -31,7 +31,7 @@ const UserController = function () {
           const updatedUser = { 
             roleType:'SuperAdmin',
             userName:user.userName,
-            name:user.name
+            name:user.name,
           }
 
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
@@ -46,7 +46,7 @@ const UserController = function () {
           const updatedUser = { 
             roleType:'Institute',
             userName:user.userName,
-            name:user.instituteName
+            name:user.instituteName,
           }
           // console.log('user - inst', user);
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
@@ -63,7 +63,7 @@ const UserController = function () {
             roleType:'School',
             userName:user.userName,
             name:user.schoolName,
-            instituteUserName: user.instituteUserName
+            instituteUserName: user.instituteUserName,
           }
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
           return res.json({  user: updatedUser, success: true,  auth_token , role: 102 })
@@ -80,7 +80,7 @@ const UserController = function () {
             userName:user.userName,
             name:user.staffName,
             instituteUserName: user.instituteUserName,
-            schoolUserName: user.schoolUserName
+            schoolUserName: user.schoolUserName,
           }
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
           return res.json({  user: updatedUser, success: true,  auth_token, role: 103 })
@@ -142,18 +142,100 @@ const UserController = function () {
 
   const getUserDetails =  (req, res) => {
     UserModel.find().exec(function(err, items) {
-      if (err) return res.status(403).json({success: false, message: 'Error in getting UserDetails, plese try again'})
-        
-      res.json({
-            items
-        })
+      if (err) return res.status(403).json({success: false, 
+        message: 'Error in getting UserDetails, plese try again'})
+        res.json({ items })
       });
+  }
+
+  const addImageDetails = (req, res) =>{
+    const { userName, logo, role } = req.body;  
+    const condition = { userName };
+    const update = { logo }, options = {multi: false};
+
+    switch(role){
+      case 100 :
+        return res.json({  success: true, message: 'Logo updated successfully!!'})
+      break;
+      case 101 :
+        InstituteModel.update(condition,update, options, function(err, updateInfo) {
+            if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+            return res.json({  success: true, updateInfo, message: 'Logo updated successfully!!'})
+        });
+      break;
+      case 102 :
+        SchoolModel.update(condition,update, options, function(err, updateInfo) {
+          if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+          return res.json({  success: true, updateInfo, message: 'Logo updated successfully!!'})
+        })
+      break;
+
+      case 103 :
+        StaffModel.update(condition,update, options, function(err, updateInfo) {
+          if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+          return res.json({  success: true, updateInfo, message: 'Logo updated successfully!!'})
+        })
+      break;
+
+      case 104 :
+        StudentModel.update(condition,update, options, function(err, updateInfo) {
+          if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+          return res.json({  success: true, updateInfo, message: 'Logo updated successfully!!'})
+        })
+      break;
+
+    }
+  }
+
+  const getImageDetails = (req, res) =>{
+    const userName =  req.headers['username'];
+    const role =  parseInt(req.headers['role'],10 ); 
+    const conditions = { userName };
+
+    switch(role){
+      case 100 :
+        return res.json({  success: true, 
+            logo : process.env.DEFAULT_IMAGE,
+            message: `Logo updated successfully!!`
+          })
+      break;
+      case 101 :
+        InstituteModel.findOne(conditions).exec(function(err, user) {
+          if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
+          return res.json({ success: true, logo:user.logo, message: `Image Retrieverd Successfully` })
+        });
+     
+      break;
+      case 102 :
+        SchoolModel.findOne(conditions).exec(function(err, user) {
+          if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
+          return res.json({   success: true, logo:user.logo, message: `Image Retrieverd Successfully` })
+        });
+      break;
+
+      case 103 :
+        StaffModel.findOne(conditions).exec(function(err, user) {
+          if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
+          return res.json({   success: true, logo:user.logo, message: `Image Retrieverd Successfully` })
+        });
+      break;
+
+      case 104 :
+        StudentModel.findOne(conditions).exec(function(err, user) {
+          if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
+          return res.json({   success: true, logo:user.logo, message: `Image Retrieverd Successfully` })
+        });
+      break;
+
+    }
   }
 
   return {
     getUserDetails,
     authenticateUser,
     validateToken,
+    addImageDetails,
+    getImageDetails,
   }
 }
 module.exports = UserController;

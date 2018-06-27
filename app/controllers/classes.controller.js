@@ -1,3 +1,5 @@
+//TODO - Complete the method "getTimeTableInfo" to view saved TimeTableInfo
+
 var jwt    = require('jsonwebtoken');
 const ClassesModel = require('../models/classes.model');
 const SubjectsModel = require('../models/subjects.model');
@@ -54,7 +56,6 @@ const ClassesController = function () {
                 } else  return res.status(403).json({success: false, message: 'Class alredy Exists'})
               });
 
-         
         }
     
       }
@@ -138,7 +139,7 @@ const ClassesController = function () {
 
       const addNewHour = (req, res) => {
         
-        const  {instituteUserName, hourName, startTime, endTime, fromMode } = req.body;
+        const  {instituteUserName, schoolUserName, hourName, startTime, endTime, fromMode } = req.body;
          
          if(!instituteUserName || !hourName) 
          return res.status(403).json({success: false, message: 'Please provide instituteUserName & hourName'});
@@ -148,6 +149,7 @@ const ClassesController = function () {
          let insertionDetails = {
              hourName,
              instituteUserName,
+             schoolUserName,
              startTime: new Date(startTime), 
              endTime: new Date(endTime), 
              createdOn: new Date()
@@ -216,7 +218,7 @@ const ClassesController = function () {
                 update= { $addToSet:{associatedWith: {classId, schoolUserName: subject.schoolUserName }} };
                 SubjectsModel.update(condition, update).exec((err, sch)=>{
                   if (err) return res.status(403).json({success: false, message: 'Error in adding'})
-                  count--; console.log('res=>',res)
+                  count--; // console.log('res=>',res)
                   if(count == 0) return res.json({  success: true, message: 'acadamic setup added / updated successfully!!'})
                 })
             })
@@ -303,6 +305,17 @@ const ClassesController = function () {
             res.json({success: true, hoursList })
         });
       }
+      
+      const getTimeTableInfo = (req, res) => {
+        const instituteUserName =  req.headers['instituteusername'];
+        // const classId =  req.headers['classid'] ;
+        const schoolUserName =  req.headers['schoolusername'];
+        // let condition = classId ? { instituteUserName, associatedWith:{ $elemMatch: { classId } } } : { instituteUserName };
+        HoursModel.find({instituteUserName}).exec(function(err, hoursList) {
+            if (err)  return res.status(403).json({success: false, message: 'Error in retrieving hoursList ', err})
+            res.json({success: true, hoursList })
+        });
+      }
 
   return {
     addClass,
@@ -314,6 +327,7 @@ const ClassesController = function () {
     getClassesList,
     getSubjectsList,
     getHoursList,
+    getTimeTableInfo,
     removeEntry,
     addAcadamicSetup,
     saveTimeTableInfo

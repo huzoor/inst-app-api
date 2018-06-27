@@ -47,7 +47,7 @@ const StudentController = function () {
     
         let insertionDetails = { 
             name, dob, rollNumber, classEnrolled, schoolUserName, instituteUserName, 
-            gender, photoPath:`Images/${mobile}-STU.png`,   
+            gender, logo: process.env.DEFAULT_IMAGE,   
             address, city, district, state, country, fatherName, motherName,
             userName: `${mobile}-STU`,  email, mobile, isAvailable : true,
         }
@@ -61,7 +61,7 @@ const StudentController = function () {
             \nPassword: ${password} `;
             const restPassURL = `${process.env.WEB_END_URI}username=${mobile}-STU&amp;type=Inst`;
             const endUrl = `${process.env.SMS_END_URI}&phone=${mobile}&text=${messageText}`;
-            console.log('endUrl', endUrl)
+            // console.log('endUrl', endUrl)
             request(endUrl, { json: true }, (mErr, mRes, mBody) => {
             if (err) { return console.log(mErr); }
             console.log('mRes, mBody', mBody)
@@ -143,7 +143,7 @@ const StudentController = function () {
                 { schoolUserName,instituteUserName, isAvailable : true }
     let projection = classEnrolled ?  {_id:1, rollNumber: 2, name: 3 }: {_id:1, rollNumber: 2, name: 3, 
       address:4, city:5, classEnrolled:6, country:7, district:8, dob:9, email:11, fatherName:12, gender:13,
-      instituteUserName:14, mobile:15, motherName:16, name:17, photoPath:18, rollNumber:19,schoolUserName:20,
+      instituteUserName:14, mobile:15, motherName:16, name:17, logo:18, rollNumber:19,schoolUserName:20,
       state:21, _id:24 };
 
     StudentModel.find(finder, projection).exec(function(err, studentsList) {
