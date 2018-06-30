@@ -13,6 +13,9 @@ var LeaveSchema = new Schema({
     instituteUserName: String,             
     schoolUserName: String,
     approvedBy: String,
+    rejectedBy: String,
+    deletedBy: String,
+    status: String,
     isApproved: Boolean,
     createdOn: Date,
 }, { collection: 'leaves' });

@@ -54,7 +54,10 @@ const LeaveController = function () {
         reason,
         instituteUserName,             
         schoolUserName,
+        status: `applied by ${appliedBy}`,
         approvedBy:'',
+        rejectedBy:'',
+        deletedBy: '',
         isApproved: false,
         createdOn : new Date(),
     }
@@ -66,23 +69,97 @@ const LeaveController = function () {
         })
   }
 
+  const approveLeave = (req, res) => {
+    const { 
+      _id,
+      appliedBy,
+      userRole,
+      approvedUser,
+      instituteUserName,             
+      schoolUserName
+    } = req.body;
+
+    const condition = { _id, appliedBy, instituteUserName, schoolUserName },
+    update = { rejectedBy:'', deletedBy: '', status: `approved by ${approvedUser}`,   approvedBy : approvedUser, isApproved: true }
+
+    LeaveModel.update(condition, update).exec((err, sch)=>{
+      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
+      return res.json({  success: true, message: 'Leave approved sccessfully'})
+    })
+  }
+
   const getLeavesList =  (req, res) => {
     const schoolUserName =  req.headers['schoolusername'];
     const instituteUserName =  req.headers['instituteusername'];
+    const staffUserName =  req.headers['staffusername'] || '';
     const appliedBy =  req.headers['appliedby'];
+    const role =  req.headers['role'];
+    const listMode =  req.headers['listmode'];
+    
     if(!schoolUserName || !instituteUserName ||!appliedBy )  
-        return res.status(403).json({success: false, message: 'Plese Provide schoolUserName, instituteUserName & appliedBy'})
-    LeaveModel.find( { schoolUserName,instituteUserName, appliedBy }).sort({createdOn: -1}).exec(function(err, LeavesList) {
+      return res.status(403).json({success: false, message: 'Plese Provide schoolUserName, instituteUserName & appliedBy'})
+  
+    let condition = { schoolUserName, instituteUserName , appliedBy}
+    
+    if(listMode === 'approve') {
+      condition = ( role == 102) ? { schoolUserName, instituteUserName  } : { staffUserName, schoolUserName, instituteUserName  }
+    }
+
+    LeaveModel.find( condition ).sort({createdOn: -1}).exec(function(err, LeavesList) {
         if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Leaves List '})
         res.json({
             success: true,
-            LeavesList
+            LeavesList,
+            condition
         })
       });
+    
   }
+
+  const rejectLeave =  (req, res) => {
+    const { 
+      _id,
+      appliedBy,
+      userRole,
+      rejectedUser,
+      instituteUserName,             
+      schoolUserName
+    } = req.body;
+
+    const condition = { _id, appliedBy, instituteUserName, schoolUserName },
+    update = { approvedBy : '', deletedBy: '', isApproved: false, status: `rejected by ${rejectedUser}`, rejectedBy: rejectedUser }
+
+    LeaveModel.update(condition, update).exec((err, sch)=>{
+      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
+      return res.json({  success: true, message: 'Leave rejected sccessfully'})
+    })
+  }
+
+  const deleteLeave =  (req, res) => {
+    const { 
+      _id,
+      appliedBy,
+      userRole,
+      deletedUser,
+      instituteUserName,             
+      schoolUserName
+    } = req.body;
+
+    const condition = { _id, appliedBy, instituteUserName, schoolUserName },
+    update = { approvedBy : '', rejectedBy: '', status: `deleted by ${deletedUser}`, isApproved: false, deletedBy: deletedUser }
+
+    LeaveModel.update(condition, update).exec((err, sch)=>{
+      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
+      return res.json({  success: true, message: 'Leave deleted sccessfully'})
+    })
+  }
+
 
   return {
     applyLeave,
+    approveLeave,
+    rejectLeave,
+    deleteLeave,
     getLeavesList
   }
 }

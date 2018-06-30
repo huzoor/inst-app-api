@@ -25,17 +25,16 @@ const UserController = function () {
       case "ADMIN":
         UserModel.findOne(conditions).exec(function(err, user) {
           if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
-          console.log('user', user)
           if (!user) return res.status(403).json({success: false, message: 'Invalid username / password'}); 
 
           const updatedUser = { 
             roleType:'SuperAdmin',
-            userName:user.userName,
             name:user.name,
-          }
+            userName: `maviba-ADMIN`,
+          };
 
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
-          return res.json({  user: updatedUser, success: true,  auth_token, role: 100})
+          return res.json({  user: {...updatedUser}, success: true,  auth_token, role: 100})
         });
       break;
       

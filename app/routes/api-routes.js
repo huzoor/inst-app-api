@@ -61,6 +61,9 @@ var routes = function(){
     router.post('/addStudent', StudentController.addStudent);    
     router.post('/addTimelineEvent', TimelineController.addTimelineEvent);    
     router.post('/applyLeave', LeaveController.applyLeave);    
+    router.post('/approveLeave', LeaveController.approveLeave);    
+    router.post('/rejectLeave', LeaveController.rejectLeave);    
+    router.post('/deleteLeave', LeaveController.deleteLeave);    
     router.post('/addAttendance', AttendanceController.addAttendance);    
     router.post('/addExam', ExamsController.addExam);    
     router.post('/addStudentMarks', MarksController.addStudentMarks);    
