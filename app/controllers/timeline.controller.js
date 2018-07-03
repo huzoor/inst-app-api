@@ -1,5 +1,6 @@
 var jwt    = require('jsonwebtoken');
 const TimelineModel = require('../models/timeline.model');
+const ObjectId = require('mongoose').Types.ObjectId;
 require('dotenv').config(); 
 
 const TimelineController = function () {
@@ -63,6 +64,45 @@ const TimelineController = function () {
             return res.json({  success: true, message: 'timeline added successfully!!'})
           })
   }
+  const updateTimelineEvent = (req,res) =>{
+    const { 
+            timeLineId,
+            messageType,
+            message,
+            messageTo,
+            instituteUserName,             
+            schoolUserName,
+            addedUser,    
+            addedBy,
+          } = req.body;
+    if( !messageType || !message || !messageTo) 
+      return res.status(403).json({success: false, message: 'please provide all the fileds'});
+    
+        let updateDetails = { 
+            messageType,
+            message,
+            messageTo,
+            instituteUserName,             
+            schoolUserName: schoolUserName || ``,
+            addedUser,    
+            addedBy,  
+            updatedOn : new Date(),
+        }
+
+        let condition = {  _id: ObjectId(timeLineId), instituteUserName }, 
+        update = {
+          ...updateDetails,
+        },
+        options = { multi: false };
+
+        // console.log(condition)
+        
+        TimelineModel.update(condition,  update , options , function(err, user) {
+            if (err) return res.status(403).json({success: false, message: 'Error in insertion'})
+            console.log("1 document updated");
+            return res.json({  success: true, message: 'timeline updated successfully!!'})
+          })
+  }
 
   const getTimelineEvents =  (req, res) => {
     const schoolUserName =  req.headers['schoolusername'] || '';
@@ -83,7 +123,7 @@ const TimelineController = function () {
       };
     }
      
-    // console.log('condition', condition)
+    console.log('condition', condition)
     if(!instituteUserName && !schoolUserName)  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
     TimelineModel.find( condition ).sort({createdOn: -1}).exec(function(err, timeLineEvets) {
         if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Timeline Events '})
@@ -97,7 +137,8 @@ const TimelineController = function () {
 
   return {
     addTimelineEvent,
-    getTimelineEvents
+    getTimelineEvents,
+    updateTimelineEvent
   }
 }
 module.exports = TimelineController;

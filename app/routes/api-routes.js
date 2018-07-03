@@ -60,6 +60,7 @@ var routes = function(){
     router.post('/addStaff', StaffController.addStaff);    
     router.post('/addStudent', StudentController.addStudent);    
     router.post('/addTimelineEvent', TimelineController.addTimelineEvent);    
+    router.post('/updateTimelineEvent', TimelineController.updateTimelineEvent);    
     router.post('/applyLeave', LeaveController.applyLeave);    
     router.post('/approveLeave', LeaveController.approveLeave);    
     router.post('/rejectLeave', LeaveController.rejectLeave);    
