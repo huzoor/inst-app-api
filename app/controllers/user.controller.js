@@ -10,8 +10,9 @@ require('dotenv').config(); //importing node config
     Admin: 100,
     Institute: 101,
     School: 102,
-    Staff: 103,
-    Student: 104
+    TechingStaff: 103,
+    Student: 104,
+    NonTechingStaff: 105
     */
 
 const UserController = function () {
@@ -197,6 +198,7 @@ const UserController = function () {
       break;
 
       case 103 :
+      case 105 :
         StaffModel.update(condition,update, options, function(err, updateInfo) {
           if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
           return res.json({  success: true, updateInfo, message: 'Logo updated successfully!!'})
@@ -240,6 +242,7 @@ const UserController = function () {
       break;
 
       case 103 :
+      case 105 :
         StaffModel.findOne(conditions).exec(function(err, user) {
           if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
           return res.json({   success: true, logo:user.logo, message: `Image Retrieverd Successfully` })

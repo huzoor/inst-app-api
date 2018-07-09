@@ -123,14 +123,13 @@ const TimelineController = function () {
       };
     }
      
-    console.log('condition', condition)
+    // console.log('condition', condition)
     if(!instituteUserName && !schoolUserName)  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
     TimelineModel.find( condition ).sort({createdOn: -1}).exec(function(err, timeLineEvets) {
         if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Timeline Events '})
         res.json({
             success: true,
             timeLineEvets,
-            condition
         })
       });
   }

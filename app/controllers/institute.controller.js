@@ -322,7 +322,7 @@ const InstituteController = function () {
   const getGalleryList = (req, res) =>{
     const entityType =  req.headers['entitytype'];
     // console.log('entityType :',entityType)
-    GalleryModel.find({ entityType }).exec(function(err, galleryList) {
+    GalleryModel.find({ entityType }).sort({createdOn: -1}).exec(function(err, galleryList) {
       if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Gallery List '})
       
       else res.json({success: true, galleryList })
