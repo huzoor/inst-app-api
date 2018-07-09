@@ -118,7 +118,7 @@ const TimelineController = function () {
       condition = {
         $and : [
             { $or : [ {"addedUser": { $eq: schoolUserName} }, {"addedUser": { $eq: instituteUserName } } ] },
-            { $or : [{"messageTo": { $eq: messageTo }}, {"messageTo": { $eq: "all" }} ] }
+            { $or : [{"messageTo": { $eq: messageTo }}, {"messageTo": { $eq: "All" }} ] }
         ]
       };
     }

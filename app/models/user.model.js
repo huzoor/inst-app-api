@@ -6,9 +6,10 @@ var Schema = mongoose.Schema;
 
 var UsersSchema = new Schema({
     name: String,
-    username: String,
+    userName: String,
     password: String,
     role: String,
+    logo: String,
     isAvailable : Boolean,
 }, { collection: 'users' });
 

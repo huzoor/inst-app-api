@@ -43,11 +43,14 @@ var routes = function(){
     router.put('/removeSubject', ClassesController.removeSubject);
     router.put('/removeHour', ClassesController.removeHour);
     
+    router.put('/resetAdminPassword', UserController.resetSuperAdminPassword);
     router.put('/resetInstPassword', InstituteController.resetInstPassword);
     router.put('/resetSchPassword', SchoolController.resetSchPassword);
     router.put('/resetStfPassword', StaffController.resetStfPassword);
     router.put('/resetStuPassword', StudentController.resetStuPassword);
-   
+
+    router.put('/removeStudent', StudentController.removeStudent);
+    
     router.post('/authenticate', UserController.authenticateUser);    
     router.post('/addInstitute', InstituteController.addInstitute); 
     router.post('/addClass', ClassesController.addClass);    
@@ -69,9 +72,11 @@ var routes = function(){
     router.post('/addExam', ExamsController.addExam);    
     router.post('/addStudentMarks', MarksController.addStudentMarks);    
     
-    router.post('/upload', InstituteController.addToGallery);  
+    router.post('/addToGallery', InstituteController.addToGallery);  
+    router.post('/editGallery', InstituteController.editGallery);  
+    router.post('/setGalleryDesc', InstituteController.setGalleryDesc);  
     
-    
+    //User Image /Logo Related Events
     router.post('/addImageDetails', UserController.addImageDetails);  
     router.get('/getImageDetails', UserController.getImageDetails);  
     

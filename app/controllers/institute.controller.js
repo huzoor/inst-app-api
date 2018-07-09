@@ -177,34 +177,34 @@ const InstituteController = function () {
 
   const addToGallery = (req,res) => {
       let currentDate = Date.now();
-        let storage = multer.diskStorage({
-          destination: function (dReq, file, cb) {
-            const currentDir = `${DIR}${dReq.body.entityType}/`;
-            if (!fs.existsSync(currentDir)){
-              fs.mkdirSync(currentDir);
-              cb(null, currentDir); // Absolute path. Folder must exist, will not be created for you.
-            } else cb(null, currentDir);
-          },
-          filename: function (fReq, file, cb) {
-            //  console.log(fReq.body, file);
-            if( !fReq.body.title || !fReq.body.description) 
-                 return res.status(403).json({success: false, message: 'please provide all the fileds of gallery form'});
-            
-            const currentDir = `${DIR}${fReq.body.entityType}/`;
-            if (!fs.existsSync(currentDir)){
-              fs.mkdirSync(currentDir);
-              let extArray = file.mimetype.split("/"),
-              extension = extArray[extArray.length - 1],
-              extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
-              cb(null, extFileName);
-            }  else {
-              let extArray = file.mimetype.split("/"),
-              extension = extArray[extArray.length - 1],
-              extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
-              cb(null, extFileName);
-            } 
-          }
-        })
+      let storage = multer.diskStorage({
+        destination: function (dReq, file, cb) {
+          const currentDir = `${DIR}${dReq.body.entityType}/`;
+          if (!fs.existsSync(currentDir)){
+            fs.mkdirSync(currentDir);
+            cb(null, currentDir); // Absolute path. Folder must exist, will not be created for you.
+          } else cb(null, currentDir);
+        },
+        filename: function (fReq, file, cb) {
+          //  console.log(fReq.body, file);
+          if( !fReq.body.title || !fReq.body.description) 
+                return res.status(403).json({success: false, message: 'please provide all the fileds of gallery form'});
+          
+          const currentDir = `${DIR}${fReq.body.entityType}/`;
+          if (!fs.existsSync(currentDir)){
+            fs.mkdirSync(currentDir);
+            let extArray = file.mimetype.split("/"),
+            extension = extArray[extArray.length - 1],
+            extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
+            cb(null, extFileName);
+          }  else {
+            let extArray = file.mimetype.split("/"),
+            extension = extArray[extArray.length - 1],
+            extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
+            cb(null, extFileName);
+          } 
+        }
+      })
       let upload = multer({ storage : storage}).any();
       
       upload(req,res,function(err) {
@@ -230,11 +230,93 @@ const InstituteController = function () {
                   if (err) return res.status(403).json({success: false, message: 'Error in upload', err})
                   console.log("1 document inserted");
                   return res.json({  success: true, message: 'File uploaded successfully !!'})
-                })
+                });
               });
           }
       });
        
+  }
+
+  const editGallery = (req, res) =>{
+    let currentDate = Date.now();
+    let storage = multer.diskStorage({
+      destination: function (dReq, file, cb) {
+        const currentDir = `${DIR}${dReq.body.entityType}/`;
+        if (!fs.existsSync(currentDir)){
+          fs.mkdirSync(currentDir);
+          cb(null, currentDir); // Absolute path. Folder must exist, will not be created for you.
+        } else cb(null, currentDir);
+      },
+      filename: function (fReq, file, cb) {
+        //  console.log(fReq.body, file);
+        if( !fReq.body.title || !fReq.body.description) 
+              return res.status(403).json({success: false, message: 'please provide all the fileds of gallery form'});
+        
+        const currentDir = `${DIR}${fReq.body.entityType}/`;
+        if (!fs.existsSync(currentDir)){
+          fs.mkdirSync(currentDir);
+          let extArray = file.mimetype.split("/"),
+          extension = extArray[extArray.length - 1],
+          extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
+          cb(null, extFileName);
+        }  else {
+          let extArray = file.mimetype.split("/"),
+          extension = extArray[extArray.length - 1],
+          extFileName = `${fReq.body.entityType}-${currentDate}.${extension}`;
+          cb(null, extFileName);
+        } 
+      }
+    })
+    let upload = multer({ storage : storage}).any();
+    
+    upload(req,res,function(err) {
+        if(err) {
+            console.log(err);
+            return res.status(403).json({success: false, message: 'Error in uploading'})
+        } else {
+          // console.log('req.files', req.files)
+           req.files.forEach( function(f) {
+            //  console.log(f);
+             const { galId, title, description, entityType } = req.body;
+             let extArray = f.mimetype.split("/"),
+             extension = extArray[extArray.length - 1],
+             image = `${entityType}-${currentDate}.${extension}`,
+             imageLocation = `uploads/${entityType}/${image}`;   
+
+             let updateDetails = { 
+              title, 
+              description, 
+              entityType,
+              imageLocation,
+           }, condition = { _id: ObjectId(galId) }, options = {multi: false}
+
+             console.log('Edit with Photo',req.body, req.body.galId, condition, updateDetails, options)
+             GalleryModel.update(condition, updateDetails, options, function(err, user) {
+                if (err) return res.status(403).json({success: false, message: 'Error in upload', err})
+                console.log("1 document inserted");
+                return res.json({  success: true, message: 'File uploaded successfully !!'})
+              });
+            });
+        }
+    });
+
+
+  }
+  
+  const setGalleryDesc = (req, res) =>{
+    const { galId, title, description, entityType } = req.body;
+    let updateDetails = { 
+      title, 
+      description, 
+      entityType,
+   }, condition = { _id: ObjectId(galId) }, options = {multi: false};
+
+    console.log('NO Photo',condition, updateDetails, options)
+    GalleryModel.update(condition, updateDetails, options, function(err, user) {
+      if (err) return res.status(403).json({success: false, message: 'Error in upload', err})
+      console.log("1 document inserted");
+      return res.json({  success: true, message: 'File uploaded successfully !!'})
+    });
   }
   
   const getGalleryList = (req, res) =>{
@@ -255,6 +337,8 @@ const InstituteController = function () {
     instAvailStaus,
     resetInstPassword,
     addToGallery,
+    editGallery,
+    setGalleryDesc,
     getGalleryList
   }
 }

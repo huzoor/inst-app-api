@@ -30,7 +30,7 @@ const UserController = function () {
           const updatedUser = { 
             roleType:'SuperAdmin',
             name:user.name,
-            userName: `maviba-ADMIN`,
+            userName: user.userName,
           };
 
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
@@ -147,14 +147,41 @@ const UserController = function () {
       });
   }
 
+  const resetSuperAdminPassword = (req, res) =>{
+    let password = req.body.newPassword,
+    currentPassword = req.body.currentPassword,
+    userName = req.body.userName,
+    condition = { userName },
+    update = {
+      password,
+    },
+    options = { multi: false }; 
+
+    UserModel.find({userName, password:currentPassword}).exec(function(err, instPass) {
+      if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Admin Info '})
+      if(instPass.length >0 )
+      UserModel.update(condition,update, options, function(err, instituteInfo) {
+          if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+          return res.json({  success: true, message: `Pasword updated successfully!!`})
+        });
+      else return res.status(403).json({success: false, message: 'Please Enter Valid Password'})
+
+    });
+    
+  }
+
   const addImageDetails = (req, res) =>{
     const { userName, logo, role } = req.body;  
     const condition = { userName };
     const update = { logo }, options = {multi: false};
-
+    console.log('condition', condition, logo)
     switch(role){
       case 100 :
-        return res.json({  success: true, message: 'Logo updated successfully!!'})
+        // return res.json({  success: true, message: 'Logo updated successfully!!'})
+        UserModel.update(condition,update, options, function(err, updateUserInfo) {
+          if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+          return res.json({  success: true, updateUserInfo, message: 'Logo updated successfully!!'})
+      });
       break;
       case 101 :
         InstituteModel.update(condition,update, options, function(err, updateInfo) {
@@ -190,13 +217,13 @@ const UserController = function () {
     const userName =  req.headers['username'];
     const role =  parseInt(req.headers['role'],10 ); 
     const conditions = { userName };
-
+    console.log(conditions);
     switch(role){
       case 100 :
-        return res.json({  success: true, 
-            logo : process.env.DEFAULT_IMAGE,
-            message: `Logo updated successfully!!`
-          })
+          UserModel.findOne(conditions).exec(function(err, user) {
+            if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
+            return res.json({ success: true, logo:user.logo, message: `Image Retrieverd Successfully` })
+          });
       break;
       case 101 :
         InstituteModel.findOne(conditions).exec(function(err, user) {
@@ -231,6 +258,7 @@ const UserController = function () {
 
   return {
     getUserDetails,
+    resetSuperAdminPassword,
     authenticateUser,
     validateToken,
     addImageDetails,

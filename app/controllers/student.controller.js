@@ -86,7 +86,7 @@ const StudentController = function () {
   }
 
   const removeStudent = (req, res) =>{
-    let StuID = ObjectId(req.body._id),
+    let StuID = ObjectId(req.body.stuId),
     condition = { _id :StuID },
     update = {
       isAvailable : false,
@@ -143,7 +143,7 @@ const StudentController = function () {
                 { schoolUserName,instituteUserName, isAvailable : true }
     let projection = classEnrolled ?  {_id:1, rollNumber: 2, name: 3 }: {_id:1, rollNumber: 2, name: 3, 
       address:4, city:5, classEnrolled:6, country:7, district:8, dob:9, email:11, fatherName:12, gender:13,
-      instituteUserName:14, mobile:15, motherName:16, name:17, logo:18, rollNumber:19,schoolUserName:20,
+      instituteUserName:14, mobile:15, motherName:16, name:17, rollNumber:19,schoolUserName:20,
       state:21, _id:24 };
 
     StudentModel.find(finder, projection).exec(function(err, studentsList) {
