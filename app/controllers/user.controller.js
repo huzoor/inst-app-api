@@ -175,7 +175,7 @@ const UserController = function () {
     const { userName, logo, role } = req.body;  
     const condition = { userName };
     const update = { logo }, options = {multi: false};
-    console.log('condition', condition, logo)
+    // console.log('condition', condition, logo)
     switch(role){
       case 100 :
         // return res.json({  success: true, message: 'Logo updated successfully!!'})

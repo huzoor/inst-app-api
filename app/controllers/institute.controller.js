@@ -311,12 +311,22 @@ const InstituteController = function () {
       entityType,
    }, condition = { _id: ObjectId(galId) }, options = {multi: false};
 
-    console.log('NO Photo',condition, updateDetails, options)
+    // console.log('NO Photo',condition, updateDetails, options)
     GalleryModel.update(condition, updateDetails, options, function(err, user) {
       if (err) return res.status(403).json({success: false, message: 'Error in upload', err})
-      console.log("1 document inserted");
+      console.log("1 document updated");
       return res.json({  success: true, message: 'File uploaded successfully !!'})
     });
+  }
+
+  const removeGalleryItem = (req, res) =>{
+    let condition = { _id: ObjectId(req.body.galId) }, options = {multi: false};
+    console.log('Remove',condition)
+    GalleryModel.findOneAndRemove(condition, options, function(err, className) {
+      if (err) return res.status(403).json({success: false, message: 'Error in adding'})
+      return res.json({  success: true, message: 'Class Removed successfully!!'})
+    });
+    
   }
   
   const getGalleryList = (req, res) =>{
@@ -339,7 +349,8 @@ const InstituteController = function () {
     addToGallery,
     editGallery,
     setGalleryDesc,
-    getGalleryList
+    getGalleryList,
+    removeGalleryItem
   }
 }
 module.exports = InstituteController;

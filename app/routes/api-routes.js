@@ -75,6 +75,7 @@ var routes = function(){
     router.post('/addToGallery', InstituteController.addToGallery);  
     router.post('/editGallery', InstituteController.editGallery);  
     router.post('/setGalleryDesc', InstituteController.setGalleryDesc);  
+    router.put('/removeGalleryItem', InstituteController.removeGalleryItem);
     
     //User Image /Logo Related Events
     router.post('/addImageDetails', UserController.addImageDetails);  

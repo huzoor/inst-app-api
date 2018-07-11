@@ -108,7 +108,7 @@ const AttendanceController = function () {
     const classCode =  req.headers['classcode'];
     const subjectCode =  req.headers['subjectcode'];
     const createdOn =  req.headers['createdon'];  
-    console.log('INfo On', {createdOn, instituteUserName, schoolUserName,classCode, subjectCode})
+    // console.log('INfo On', {createdOn, instituteUserName, schoolUserName,classCode, subjectCode})
     let finder = { createdOn, instituteUserName, schoolUserName, 'presentiesList':{$elemMatch: {classCode, subjectCode} }}
 
     if(!schoolUserName || !instituteUserName ||!classCode ||!subjectCode ||!createdOn )  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
