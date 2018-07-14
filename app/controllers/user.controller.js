@@ -82,6 +82,7 @@ const UserController = function () {
             name:user.staffName,
             instituteUserName: user.instituteUserName,
             schoolUserName: user.schoolUserName,
+            stfSubject:user.subject,
           }
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
           return res.json({  user: updatedUser, success: true,  auth_token, role: 103 })

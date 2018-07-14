@@ -36,6 +36,7 @@ const LeaveController = function () {
   const applyLeave = (req,res) =>{
     const { 
             appliedBy,
+            appliedUser,
             userRole,
             fromDate,
             toDate,            
@@ -48,13 +49,14 @@ const LeaveController = function () {
     
     let insertionDetails = { 
         appliedBy,
+        appliedUser,
         userRole,
         fromDate: fromDate.formatted,
         toDate: toDate.formatted,            
         reason,
         instituteUserName,             
         schoolUserName,
-        status: `applied by ${appliedBy}`,
+        status: `applied by ${appliedUser} - ${userRole}`,
         approvedBy:'',
         rejectedBy:'',
         deletedBy: '',
@@ -75,16 +77,57 @@ const LeaveController = function () {
       appliedBy,
       userRole,
       approvedUser,
+      approvedUserName,
       instituteUserName,             
       schoolUserName
     } = req.body;
 
     const condition = { _id, appliedBy, instituteUserName, schoolUserName },
-    update = { rejectedBy:'', deletedBy: '', status: `approved by ${approvedUser}`,   approvedBy : approvedUser, isApproved: true }
+    update = { rejectedBy:'', deletedBy: '', status: `Approved by ${approvedUser} - ${userRole}`,   approvedBy : approvedUserName, isApproved: true }
 
     LeaveModel.update(condition, update).exec((err, sch)=>{
       if (err) return res.status(403).json({success: false, message: 'Error in 2'})
       return res.json({  success: true, message: 'Leave approved sccessfully'})
+    })
+  }
+
+  const rejectLeave =  (req, res) => {
+    const { 
+      _id,
+      appliedBy,
+      userRole,
+      rejectedUser,
+      rejectedUserName,
+      instituteUserName,             
+      schoolUserName
+    } = req.body;
+
+    const condition = { _id, appliedBy, instituteUserName, schoolUserName },
+    update = { approvedBy : '', deletedBy: '', isApproved: false, status: `Rejected by ${rejectedUser} - ${userRole}`, rejectedBy: rejectedUserName }
+
+    LeaveModel.update(condition, update).exec((err, sch)=>{
+      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
+      return res.json({  success: true, message: 'Leave rejected sccessfully'})
+    })
+  }
+
+  const deleteLeave =  (req, res) => {
+    const { 
+      _id,
+      appliedBy,
+      userRole,
+      deletedUser,
+      deletedUserName,
+      instituteUserName,             
+      schoolUserName
+    } = req.body;
+
+    const condition = { _id, appliedBy, instituteUserName, schoolUserName },
+    update = { approvedBy : '', rejectedBy: '', status: `Deleted by ${deletedUser} - ${userRole}`, isApproved: false, deletedBy: deletedUserName }
+
+    LeaveModel.update(condition, update).exec((err, sch)=>{
+      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
+      return res.json({  success: true, message: 'Leave deleted sccessfully'})
     })
   }
 
@@ -114,44 +157,6 @@ const LeaveController = function () {
         })
       });
     
-  }
-
-  const rejectLeave =  (req, res) => {
-    const { 
-      _id,
-      appliedBy,
-      userRole,
-      rejectedUser,
-      instituteUserName,             
-      schoolUserName
-    } = req.body;
-
-    const condition = { _id, appliedBy, instituteUserName, schoolUserName },
-    update = { approvedBy : '', deletedBy: '', isApproved: false, status: `rejected by ${rejectedUser}`, rejectedBy: rejectedUser }
-
-    LeaveModel.update(condition, update).exec((err, sch)=>{
-      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
-      return res.json({  success: true, message: 'Leave rejected sccessfully'})
-    })
-  }
-
-  const deleteLeave =  (req, res) => {
-    const { 
-      _id,
-      appliedBy,
-      userRole,
-      deletedUser,
-      instituteUserName,             
-      schoolUserName
-    } = req.body;
-
-    const condition = { _id, appliedBy, instituteUserName, schoolUserName },
-    update = { approvedBy : '', rejectedBy: '', status: `deleted by ${deletedUser}`, isApproved: false, deletedBy: deletedUser }
-
-    LeaveModel.update(condition, update).exec((err, sch)=>{
-      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
-      return res.json({  success: true, message: 'Leave deleted sccessfully'})
-    })
   }
 
 

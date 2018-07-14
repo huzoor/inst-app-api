@@ -60,6 +60,7 @@ var routes = function(){
     router.post('/removeEntry', ClassesController.removeEntry);
     router.post('/addNewHour', ClassesController.addNewHour);
     router.post('/addAcadamicSetup', ClassesController.addAcadamicSetup);                    
+    router.post('/addStaffAcadamicSetup', ClassesController.addStaffAcadamicSetup);                    
     router.post('/saveTimeTableInfo', ClassesController.saveTimeTableInfo);                    
     router.post('/addSchool', SchoolController.addSchool);    
     router.post('/addStaff', StaffController.addStaff);    

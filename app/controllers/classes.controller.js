@@ -230,6 +230,35 @@ const ClassesController = function () {
         
       }
       
+      const addStaffAcadamicSetup = (req, res) => {
+        const { mappedList , instituteUserName, schoolUserName} = req.body;
+        if(!mappedList || !instituteUserName ||!schoolUserName )
+          return res.status(403).json({success: false, message: 'Please provide instituteUserName & subjectName'});
+        
+          if(mappedList.length > 0 ){
+            let count = mappedList.length;
+            ClassesModel.update( {instituteUserName} , { $pull: { associatedWith : { schoolUserName } } }, {multi: true}).exec((errs, resps)=>{
+              if (errs) return resps.status(403).json({success: false, message: 'Error in adding'});
+              
+              mappedList.map((cls, index)=> {
+                let classId = ObjectId(cls.classID),
+                staffId = cls.staffID,
+                condition = { _id :classId , instituteUserName},
+                update= { $addToSet:{associatedWith: {staffId, schoolUserName: cls.schoolUserName }} };
+                ClassesModel.update(condition, update).exec((err, sch)=>{
+                  if (err) return res.status(403).json({success: false, message: 'Error in adding'})
+                  count--; // console.log('res=>',res)
+                  if(count == 0) return res.json({  success: true, message: 'staff setup added / updated successfully!!'})
+                })
+            })
+            });
+
+           
+
+        } else return res.json({  success: true, message: 'No Data to Update!!'})
+        
+      }
+      
       const saveTimeTableInfo = (req, res) => {
         const { timetableInfo , selectedClass, instituteUserName, schoolUserName} = req.body;
         if(!timetableInfo || !instituteUserName || !schoolUserName || !selectedClass )
@@ -330,6 +359,7 @@ const ClassesController = function () {
     getTimeTableInfo,
     removeEntry,
     addAcadamicSetup,
+    addStaffAcadamicSetup,
     saveTimeTableInfo
   }
 }

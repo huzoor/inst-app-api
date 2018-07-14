@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 
 var LeaveSchema = new Schema({
     appliedBy: String,
+    appliedUser: String,
     userRole: String,
     fromDate: Date,
     toDate: Date,            
@@ -13,8 +14,11 @@ var LeaveSchema = new Schema({
     instituteUserName: String,             
     schoolUserName: String,
     approvedBy: String,
+    approvedUser: String,
     rejectedBy: String,
+    rejectedUser: String,
     deletedBy: String,
+    deletedUser: String,
     status: String,
     isApproved: Boolean,
     createdOn: Date,
