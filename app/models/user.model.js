@@ -10,6 +10,8 @@ var UsersSchema = new Schema({
     password: String,
     role: String,
     logo: String,
+    mobile: String,
+    email: String,
     isAvailable : Boolean,
 }, { collection: 'users' });
 

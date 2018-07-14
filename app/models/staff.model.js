@@ -16,6 +16,7 @@ var StaffSchema = new Schema({
     qualification: String,
     experience: String,
     subject: Schema.Types.ObjectId,
+    designation: String,
     yearOfPassing: String,
     schoolUserName : String, 
     instituteUserName : String, 

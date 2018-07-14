@@ -1,4 +1,5 @@
 var jwt    = require('jsonwebtoken');
+const request = require('request');
 const UserModel = require('../models/user.model');
 const InstituteModel = require('../models/institute.model');
 const SchoolModel = require('../models/school.model');
@@ -259,9 +260,95 @@ const UserController = function () {
     }
   }
 
+  const sendMessage = (endUrl, message, res) =>{
+     // console.log('endUrl', endUrl)
+     request(endUrl, { json: true }, (mErr, mRes, mBody) => {
+      if (mErr) { return console.log(mErr); }
+        console.log('mRes, mBody', mBody)
+        return res.json({   success: true,  message })
+      });
+  }
+
+  const changePassword = (req, res) =>{
+    let userRole = req.headers['userrole'],
+        constraint =  req.headers['email'],
+        condition = {
+            $and : [ { $or : [ {"userName": { $eq: constraint} }, {"email": { $eq: constraint } } ] } ]
+        };
+    switch(userRole){
+      case "Admin":
+        UserModel.findOne(condition).exec(function(err, userDtls) {
+          if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Admin Info '})
+          if(userDtls){
+            const messageText = `Thanks for contacting us. Your details as follows \nUserName : ${userDtls.userName}\nPassword: ${userDtls.password} `,
+                  successMessage =  `Email / Message sent to ${userDtls.email} / ${userDtls.mobile}`,
+                  endUrl  = `${process.env.SMS_END_URI}&phone=${userDtls.mobile}&text=${messageText}`;
+            sendMessage(endUrl, successMessage, res);
+          }
+          else return res.status(403).json({success: false, message: 'Please Enter Valid Email / Phone / User Name'})
+        });
+      break;
+
+      case "Institute":
+        InstituteModel.findOne(condition).exec(function(err, userDtls) {
+          if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Inst Info '})
+          if(userDtls){
+            const messageText = `Thanks for contacting us. Your details as follows \nUserName : ${userDtls.userName}\nPassword: ${userDtls.password} `,
+                  successMessage =  `Email / Message sent to ${userDtls.email} / ${userDtls.mobile}`,
+                  endUrl  = `${process.env.SMS_END_URI}&phone=${userDtls.mobile}&text=${messageText}`;
+            sendMessage(endUrl, successMessage, res);
+          }
+          else return res.status(403).json({success: false, message: 'Please Enter Valid Email / Phone / User Name'})
+        });
+      break;
+      
+      case "School":
+        SchoolModel.findOne(condition).exec(function(err, userDtls) {
+          if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Admin Info '})
+          if(userDtls){
+            const messageText = `Thanks for contacting us. Your details as follows \nUserName : ${userDtls.userName}\nPassword: ${userDtls.password} `,
+                  successMessage =  `Email / Message sent to ${userDtls.email} / ${userDtls.mobile}`,
+                  endUrl  = `${process.env.SMS_END_URI}&phone=${userDtls.mobile}&text=${messageText}`;
+            sendMessage(endUrl, successMessage, res);
+          }
+          else return res.status(403).json({success: false, message: 'Please Enter Valid Email / Phone / User Name'})
+        });
+      break;
+      
+      case "Staff":
+        StaffModel.findOne(condition).exec(function(err, userDtls) {
+          if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Admin Info '})
+          if(userDtls){
+            const messageText = `Thanks for contacting us. Your details as follows \nUserName : ${userDtls.userName}\nPassword: ${userDtls.password} `,
+                  successMessage =  `Email / Message sent to ${userDtls.email} / ${userDtls.mobile}`,
+                  endUrl  = `${process.env.SMS_END_URI}&phone=${userDtls.mobile}&text=${messageText}`;
+            sendMessage(endUrl, successMessage, res);
+          }
+          else return res.status(403).json({success: false, message: 'Please Enter Valid Email / Phone / User Name'})
+        });
+      break;
+      
+      case "Student":
+        StudentModel.findOne(condition).exec(function(err, userDtls) {
+          if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Admin Info '})
+          if(userDtls){
+            const messageText = `Thanks for contacting us. Your details as follows \nUserName : ${userDtls.userName}\nPassword: ${userDtls.password} `,
+                  successMessage =  `Email / Message sent to ${userDtls.email} / ${userDtls.mobile}`,
+                  endUrl  = `${process.env.SMS_END_URI}&phone=${userDtls.mobile}&text=${messageText}`;
+            sendMessage(endUrl, successMessage, res);
+          }
+          else return res.status(403).json({success: false, message: 'Please Enter Valid Email / Phone / User Name'})
+        });
+      break;
+    }
+    
+    
+  }
+
   return {
     getUserDetails,
     resetSuperAdminPassword,
+    changePassword,
     authenticateUser,
     validateToken,
     addImageDetails,

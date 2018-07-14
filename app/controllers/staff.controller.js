@@ -40,17 +40,20 @@ const StaffController = function () {
     const { 
             schoolUserName, instituteUserName, staffName, userName, email, 
             mobile, gender, staffRole, qualification, experience, subject,
-            yearOfPassing, address, city, district, state, country, fromMode
-          } = req.body;
+            yearOfPassing, address, city, district, state, country, fromMode, 
+            designation  } = req.body;
    
-    if( !schoolUserName || !userName || !email|| !mobile|| !staffRole|| !subject ||
+    if( !schoolUserName || !userName || !email|| !mobile|| !staffRole|| 
         !qualification|| !yearOfPassing|| !district|| !state) 
       return res.status(403).json({success: false, message: 'please provide all the fileds of staff form'});
       const password = 'stf';
+      let subjectInfo = (staffRole == 'Non-Teaching' ) ? ObjectId(1213431241) :  ObjectId(subject);
+      let designationInfo = (staffRole == 'Non-Teaching' ) ? designation :  '';
       let insertionDetails = { 
             schoolUserName, instituteUserName, logo: process.env.DEFAULT_IMAGE, 
-            gender, staffRole, qualification, experience, subject: ObjectId(subject),
-            yearOfPassing, address, city, district, state, country, staffName,
+            gender, staffRole, qualification, experience, subject:  subjectInfo,
+            designation: designationInfo, yearOfPassing, address, city, district, 
+            state, country, staffName,
             userName: `${userName}-STF`, email, mobile, isAvailable : true,
         }
         if(fromMode == 'create'){
@@ -137,8 +140,8 @@ const StaffController = function () {
     const instituteUserName =  req.headers['instituteusername'];
     const projection = {                 
               address:1, staffName:2, city:3, country:4, district:5, email:6, experience:7, gender:8,
-              qualification:14,  schoolUserName:15, staffRole:16, state:17, instituteUserName:9, 
-              subject:18, userName:19, yearOfPassing:20, _id:21, mobile:10,
+              designation: 11, qualification:14,  schoolUserName:15, staffRole:16, state:17, 
+              instituteUserName:9, subject:18, userName:19, yearOfPassing:20, _id:21, mobile:10,
      }; 
 
     if(!schoolUserName ) return res.status(403).json({success: false, message: 'Plese Provide schoolUserName'})

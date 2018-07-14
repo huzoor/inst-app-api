@@ -49,6 +49,8 @@ var routes = function(){
     router.put('/resetStfPassword', StaffController.resetStfPassword);
     router.put('/resetStuPassword', StudentController.resetStuPassword);
 
+    router.get('/changePassword', UserController.changePassword);
+
     router.put('/removeStudent', StudentController.removeStudent);
     
     router.post('/authenticate', UserController.authenticateUser);    
