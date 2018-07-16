@@ -269,7 +269,7 @@ const ClassesController = function () {
             HoursModel.update( { instituteUserName, schoolUserName } , { $pull: { associatedWith : { schoolUserName, classId: selectedClass} } }, {multi: true}).exec((errs, resps)=>{
               if (errs) return resps.status(403).json({success: false, message: 'Error in adding1'});
 
-              console.log(resps, schoolUserName, selectedClass)
+              // console.log(resps, schoolUserName, selectedClass)
               timetableInfo.map((hour, index)=> {
                 let hourId = ObjectId(hour.hourId),
                 classId = hour.classId,

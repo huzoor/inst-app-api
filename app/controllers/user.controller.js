@@ -221,7 +221,7 @@ const UserController = function () {
     const userName =  req.headers['username'];
     const role =  parseInt(req.headers['role'],10 ); 
     const conditions = { userName };
-    console.log(conditions);
+    // console.log(conditions);
     switch(role){
       case 100 :
           UserModel.findOne(conditions).exec(function(err, user) {

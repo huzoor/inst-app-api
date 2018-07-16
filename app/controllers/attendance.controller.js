@@ -72,14 +72,14 @@ const AttendanceController = function () {
             return res.json({  success: true, message: 'attendance added successfully!!'})
           });
         } else  {
-          console.log('attendanceInfo', attendanceInfo);
+          // console.log('attendanceInfo', attendanceInfo);
           
           let updatedPresentiesList = attendanceInfo.presentiesList.filter(i => i.classCode == classCode)
                                                                    .filter(i => i.subjectCode !== subjectCode);
           
           // let updatedPresentiesList = attendanceInfo.presentiesList.filter(i => i.classCode !== classCode || i.subjectCode !== subjectCode);
           
-          console.log('updatedPresentiesList', updatedPresentiesList)
+          // console.log('updatedPresentiesList', updatedPresentiesList)
           let newUpdatedPresentiesList = [
             ...updatedPresentiesList,
             ...presentiesList

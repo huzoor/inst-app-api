@@ -1,5 +1,6 @@
 var jwt    = require('jsonwebtoken');
 const LeaveModel = require('../models/leave.model');
+const ObjectId = require('mongoose').Types.ObjectId;
 require('dotenv').config(); 
 
 const LeaveController = function () {
@@ -71,6 +72,26 @@ const LeaveController = function () {
         })
   }
 
+  const updateLeave = (req, res) => {
+    const { 
+      leaveID,
+      fromDate,
+      toDate,            
+      reason,
+    } = req.body;
+
+    const condition = { _id: ObjectId(leaveID) },
+    update = {  fromDate: fromDate.formatted,
+                toDate: toDate.formatted, 
+                reason 
+            }
+
+    LeaveModel.update(condition, update).exec((err, sch)=>{
+      if (err) return res.status(403).json({success: false, message: 'Error in 2'})
+      return res.json({  success: true, message: 'Leave updated sccessfully'})
+    })
+  }
+  
   const approveLeave = (req, res) => {
     const { 
       _id,
@@ -137,15 +158,19 @@ const LeaveController = function () {
     const staffUserName =  req.headers['staffusername'] || '';
     const appliedBy =  req.headers['appliedby'];
     const role =  req.headers['role'];
-    const listMode =  req.headers['listmode'];
+    let listMode =  req.headers['listmode'];
     
-    if(!schoolUserName || !instituteUserName ||!appliedBy )  
+    if(!instituteUserName ||!appliedBy )  
       return res.status(403).json({success: false, message: 'Plese Provide schoolUserName, instituteUserName & appliedBy'})
-  
     let condition = { schoolUserName, instituteUserName , appliedBy}
-    
+  
     if(listMode === 'approve') {
       condition = ( role == 102) ? { schoolUserName, instituteUserName  } : { staffUserName, schoolUserName, instituteUserName  }
+    }
+
+    if(!schoolUserName){
+      condition = { instituteUserName, "userRole" : "School",  };
+      listMode  = 'approve';
     }
 
     LeaveModel.find( condition ).sort({createdOn: -1}).exec(function(err, LeavesList) {
@@ -153,7 +178,6 @@ const LeaveController = function () {
         res.json({
             success: true,
             LeavesList,
-            condition
         })
       });
     
@@ -162,6 +186,7 @@ const LeaveController = function () {
 
   return {
     applyLeave,
+    updateLeave,
     approveLeave,
     rejectLeave,
     deleteLeave,
