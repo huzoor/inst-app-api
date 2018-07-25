@@ -154,10 +154,32 @@ const StudentController = function () {
         })
       });
   }
+  
+  const getStudentsListById =  (req, res) => {
+    const userName =  req.headers['username'];
+
+    if(!userName)  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
+    
+    let finder =  { userName, isAvailable : true };
+    let projection = {_id:1, rollNumber: 2, name: 3, address:4, city:5, classEnrolled:6, country:7, 
+                      district:8, dob:9, email:11, fatherName:12, gender:13,
+                      instituteUserName:14, mobile:15, motherName:16, name:17, rollNumber:19,schoolUserName:20,
+                      state:21, _id:24 
+                    };
+
+    StudentModel.find(finder, projection).exec(function(err, studentsList) {
+        if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Students list'})
+        res.json({
+            success: true,
+            studentsList
+        })
+      });
+  }
 
   return {
     addStudent,
     getStudentsList,
+    getStudentsListById,
     removeStudent,
     stuAvailStaus,
     resetStuPassword

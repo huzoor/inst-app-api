@@ -5,6 +5,7 @@ var db = require('../../dbConnection');
 var Schema = mongoose.Schema;
 
 var StudentSchema = new Schema({
+    _id: Schema.Types.ObjectId,
     name: String, 
     password : String,  
     email : String, 

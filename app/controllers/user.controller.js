@@ -90,18 +90,20 @@ const UserController = function () {
       break;
 
       case "STU":
-        StudentModel.findOne(conditions).exec(function(err, user) {
+        StudentModel.find(conditions).exec(function(err, user) {
           if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
           if (!user) return res.status(403).json({success: false, message: 'Invalid username / password'}); 
-          // console.log('user - stu', user);
+          // console.log('user - stu', user, conditions);
           const updatedUser = { 
             roleType:'Student',
-            userName:user.userName,
-            name:user.name,
-            instituteUserName: user.instituteUserName,
-            schoolUserName: user.schoolUserName,
+            userName:user[0].userName,
+            name:user[0].name,
+            instituteUserName: user[0].instituteUserName,
+            schoolUserName: user[0].schoolUserName,
+            studentId:user[0]._id,
+            usersCont: user.length,
           }
-          var auth_token = jwt.sign( { user }, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
+          var auth_token = jwt.sign( { user: user[0] }, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
           return res.json({  user:updatedUser, success: true,  auth_token, role: 104 })
         });
       break;
@@ -342,7 +344,6 @@ const UserController = function () {
         });
       break;
     }
-    
     
   }
 

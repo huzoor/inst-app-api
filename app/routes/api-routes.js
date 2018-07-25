@@ -24,6 +24,7 @@ var routes = function(){
     router.get('/getSchools', SchoolController.getSchools);
     router.get('/getStaffList', StaffController.getStaffList);
     router.get('/getStudentsList', StudentController.getStudentsList);
+    router.get('/getStudentsListById', StudentController.getStudentsListById);
     router.get('/getTimelineEvents', TimelineController.getTimelineEvents);
     router.get('/getLeavesList', LeaveController.getLeavesList);
     router.get('/getAttendance', AttendanceController.getAttendance);
