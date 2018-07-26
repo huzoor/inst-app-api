@@ -93,7 +93,7 @@ const UserController = function () {
         StudentModel.find(conditions).exec(function(err, user) {
           if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
           if (!user) return res.status(403).json({success: false, message: 'Invalid username / password'}); 
-          // console.log('user - stu', user, conditions);
+          console.log('user - stu', user, conditions);
           const updatedUser = { 
             roleType:'Student',
             userName:user[0].userName,

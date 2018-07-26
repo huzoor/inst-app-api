@@ -107,7 +107,7 @@ const StudentController = function () {
     update = {
       password,
     },
-    options = { multi: false }; 
+    options = { multi: true }; 
 
     StudentModel.find({userName, password:currentPassword, isAvailable: true}).exec(function(err, instPass) {
       if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Staff Info '})
