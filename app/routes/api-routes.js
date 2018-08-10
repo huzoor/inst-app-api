@@ -11,6 +11,7 @@ var LeaveController = require('../controllers/leave.controller')();
 var AttendanceController = require('../controllers/attendance.controller')();
 var ExamsController = require('../controllers/exams.controller')();
 var MarksController = require('../controllers/marks.controller')();
+var BackupController = require('../controllers/backup.controller')();
 
 var routes = function(){
     let router = express.Router(); // get an instance of the express Router
@@ -84,7 +85,10 @@ var routes = function(){
     
     //User Image /Logo Related Events
     router.post('/addImageDetails', UserController.addImageDetails);  
-    router.get('/getImageDetails', UserController.getImageDetails);  
+    router.get('/getImageDetails', UserController.getImageDetails); 
+    
+    
+    // router.get('/createBackup', BackupController.createBackup);  
     
     
       

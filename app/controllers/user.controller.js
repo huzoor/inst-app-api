@@ -14,7 +14,7 @@ require('dotenv').config(); //importing node config
     TechingStaff: 103,
     Student: 104,
     NonTechingStaff: 105
-    */
+*/
 
 const UserController = function () {
   const authenticateUser =  (req, res) => {

@@ -3,12 +3,15 @@ const app = express();
 var bodyParser  = require('body-parser');
 var path=require('path');
 const db = require('./dbConnection');
+const cron = require('node-cron');
+global.__basedir = __dirname;
+
+var BackupController = require('./app/controllers/backup.controller')();
 
 require('dotenv').config(); //importing node config
 const port = process.env.PORT || 26666;
 
 //To specify application root folder
-global.__basedir = __dirname;
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -52,6 +55,12 @@ let options = {
     }
   }
   
+  cron.schedule("00 00 00 * * *", function() {
+    console.log("---------------------");
+    console.log("Running Cron Job");
+    BackupController.createBackup()
+  });
+
 app.use(express.static('assets', options))
 
 // REGISTER OUR ROUTES 
