@@ -16,14 +16,16 @@ const appUtilMethods = function () {
             from: 'mschool@mavibatechnologies.com',
             to: 'huzoorittech@gmail.com',
             subject: 'Sending Email using Node.js',
-            html: '<h1>Welcome</h1><p>That was easy!</p>'
+            html: emailBody
         }
 
         transporter.sendMail(mailOptions, function(error, info){
         if (error) {
             console.log(error);
+            return false;
         } else {
             console.log('Email sent: ' + info.response);
+            return true;
         }
         });
     }

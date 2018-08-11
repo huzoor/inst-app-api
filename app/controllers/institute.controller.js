@@ -338,6 +338,21 @@ const InstituteController = function () {
       else res.json({success: true, galleryList })
     });
   }
+  
+  const sendTestEmail = (req, res) =>{
+    const emailBody= `
+          <h1>Welcome to Maviba tech</h1>
+          <p>Test Mail As Follows</p>`;
+
+          if(appUtilMethods().sendEmail(emailBody)){
+            res.json({
+              success: true,
+              message: `Email Sent Successfully`
+            })
+          } else res.status(403).json({success: false, message: 'Error in sending mail'})
+          
+
+  }
 
 
   return {
@@ -350,7 +365,8 @@ const InstituteController = function () {
     editGallery,
     setGalleryDesc,
     getGalleryList,
-    removeGalleryItem
+    removeGalleryItem,
+    sendTestEmail
   }
 }
 module.exports = InstituteController;
