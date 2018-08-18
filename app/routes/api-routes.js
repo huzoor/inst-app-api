@@ -88,6 +88,7 @@ var routes = function(){
     router.get('/getImageDetails', UserController.getImageDetails); 
     
     router.get('/sendTestEmail', InstituteController.sendTestEmail);  
+    router.get('/createBackup', BackupController.createBackup);  
     
     
       

@@ -19,7 +19,8 @@ const BackupController = function () {
     backup({
       uri: process.env.MONGODB_CONNECT_URI, // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
       root: currentDir, // write files into this dir
-      tar: 'dump.tar',
+      parser: 'json',
+      tar: 'dbDump.tar',
       callback: function(err) {
     
         if (err) {
@@ -33,7 +34,6 @@ const BackupController = function () {
      
   }
 
-  
 
   return {
     createBackup

@@ -55,7 +55,7 @@ let options = {
     }
   }
   
-  cron.schedule("00 00 00 * * *", function() {
+  cron.schedule("00 30 13 * * *", function() {
     console.log("---------------------");
     console.log("Running Cron Job");
     BackupController.createBackup()
