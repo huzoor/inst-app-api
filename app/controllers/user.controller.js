@@ -4,6 +4,8 @@ const UserModel = require('../models/user.model');
 const InstituteModel = require('../models/institute.model');
 const SchoolModel = require('../models/school.model');
 const StaffModel = require('../models/staff.model');
+const ClaseesModel = require('../models/classes.model');
+const ObjectId = require('mongoose').Types.ObjectId;
 const StudentModel = require('../models/student.model');
 require('dotenv').config(); //importing node config
 
@@ -83,6 +85,7 @@ const UserController = function () {
             instituteUserName: user.instituteUserName,
             schoolUserName: user.schoolUserName,
             stfSubject:user.subject,
+            staffId: user._id,
           }
           var auth_token = jwt.sign( {user}, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
           return res.json({  user: updatedUser, success: true,  auth_token, role: 103 })
@@ -93,8 +96,9 @@ const UserController = function () {
         StudentModel.find(conditions).exec(function(err, user) {
           if (err) return res.status(403).json({success: false, message: 'Error in validating, plese try again'})
           if (!user) return res.status(403).json({success: false, message: 'Invalid username / password'}); 
-          console.log('user - stu', user, conditions);
-          const updatedUser = { 
+          // console.log('user - stu', user, conditions);
+          
+          let updatedUser = { 
             roleType:'Student',
             userName:user[0].userName,
             name:user[0].name,
@@ -102,9 +106,28 @@ const UserController = function () {
             schoolUserName: user[0].schoolUserName,
             studentId:user[0]._id,
             usersCont: user.length,
-          }
-          var auth_token = jwt.sign( { user: user[0] }, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
-          return res.json({  user:updatedUser, success: true,  auth_token, role: 104 })
+            classEnrolled: user[0].classEnrolled,
+          };
+          let auth_token = jwt.sign( { user: user[0] }, process.env.AUTH_SECRET_KEY , { expiresIn: 60 });
+
+          if(user[0] && user[0].classEnrolled) {
+            let clsId = ObjectId(user[0].classEnrolled)
+            ClaseesModel.findOne({_id: clsId}).exec(function(err, clsList) {
+              
+              let staffId=''
+              if(clsList.associatedWith.length>0){
+                  clsList.associatedWith.map((item, index)=>{
+                    console.log('Compare', item.schoolUserName +""+ user[0].schoolUserName);
+                    if(item.schoolUserName == user[0].schoolUserName)
+                      staffId = item.staffId
+                  });
+                  updatedUser.staffId = staffId;
+                  return res.json({  user:updatedUser, success: true,  auth_token, role: 104 })
+              } else  return res.json({  user:updatedUser, success: true,  auth_token, role: 104 })
+            })
+          }  else return res.json({  user:updatedUser, success: true,  auth_token, role: 104 })
+          
+          
         });
       break;
 

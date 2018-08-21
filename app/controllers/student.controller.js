@@ -46,6 +46,7 @@ const StudentController = function () {
       return res.status(403).json({success: false, message: 'please provide all the fileds of student form'});
     
         let insertionDetails = { 
+            _id: new ObjectId(),
             name, dob, rollNumber, classEnrolled, schoolUserName, instituteUserName, 
             gender, logo: process.env.DEFAULT_IMAGE,   
             address, city, district, state, country, fatherName, motherName,
@@ -55,7 +56,7 @@ const StudentController = function () {
         if(formMode == 'create'){
           const password = `stu`;
         StudentModel.create({...insertionDetails, password}, function(err, user) {
-            if (err) return res.status(403).json({success: false, message: 'Error in insertion'})
+            if (err) return res.status(403).json({success: false, message: 'Error in insertion', err, insertionDetails})
             console.log("1 document inserted");
             const messageText = `Thanks for adding Student. Your details as follows \nUserName : ${mobile}-STU  
             \nPassword: ${password} `;

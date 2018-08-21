@@ -13,6 +13,7 @@ var LeaveSchema = new Schema({
     reason: String,
     instituteUserName: String,             
     schoolUserName: String,
+    staffId: String,
     approvedBy: String,
     approvedUser: String,
     rejectedBy: String,

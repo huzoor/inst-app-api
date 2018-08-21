@@ -44,6 +44,7 @@ const LeaveController = function () {
             reason,
             instituteUserName,             
             schoolUserName,
+            staffId,
           } = req.body;
     if( !appliedBy || !fromDate || !toDate ||!reason ) 
       return res.status(403).json({success: false, message: 'please provide all the fileds info'});
@@ -57,6 +58,7 @@ const LeaveController = function () {
         reason,
         instituteUserName,             
         schoolUserName,
+        staffId,
         status: `applied by ${appliedUser} - ${userRole}`,
         approvedBy:'',
         rejectedBy:'',
@@ -155,18 +157,18 @@ const LeaveController = function () {
   const getLeavesList =  (req, res) => {
     const schoolUserName =  req.headers['schoolusername'];
     const instituteUserName =  req.headers['instituteusername'];
-    const staffUserName =  req.headers['staffusername'] || '';
+    const staffId =  req.headers['staffid'] || '';
     const appliedBy =  req.headers['appliedby'];
     const role =  req.headers['role'];
     let listMode =  req.headers['listmode'];
     
     if(!instituteUserName ||!appliedBy )  
       return res.status(403).json({success: false, message: 'Plese Provide schoolUserName, instituteUserName & appliedBy'})
+    
     let condition = { schoolUserName, instituteUserName , appliedBy}
-  
-    if(listMode === 'approve') {
-      condition = ( role == 102) ? { schoolUserName, instituteUserName  } : { staffUserName, schoolUserName, instituteUserName  }
-    }
+      if(listMode === 'approve') {
+        condition = ( role == 102) ? { schoolUserName, instituteUserName  } : { staffId, schoolUserName, instituteUserName  }    
+      }
 
     if(!schoolUserName){
       condition = { instituteUserName, "userRole" : "School",  };
