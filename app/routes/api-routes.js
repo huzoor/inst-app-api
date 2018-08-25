@@ -23,6 +23,7 @@ var routes = function(){
     router.get('/getSubjectsList', ClassesController.getSubjectsList);
     router.get('/getHoursList', ClassesController.getHoursList);
     router.get('/getSchools', SchoolController.getSchools);
+    router.get('/getRegSchoolsCount', SchoolController.getRegSchoolsCount);
     router.get('/getStaffList', StaffController.getStaffList);
     router.get('/getStudentsList', StudentController.getStudentsList);
     router.get('/getStudentsListById', StudentController.getStudentsListById);

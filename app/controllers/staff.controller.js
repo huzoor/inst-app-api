@@ -136,17 +136,18 @@ const StaffController = function () {
   }
 
   const getStaffList =  (req, res) => {
-    const schoolUserName =  req.headers['schoolusername'];
-    const instituteUserName =  req.headers['instituteusername'];
-    const projection = {                 
+    const schoolUserName =  req.headers['schoolusername'],
+          instituteUserName =  req.headers['instituteusername'],
+          staffRole =  req.headers['staffrole'],
+          projection = {                 
               address:1, staffName:2, city:3, country:4, district:5, email:6, experience:7, gender:8,
               designation: 11, qualification:14,  schoolUserName:15, staffRole:16, state:17, 
               instituteUserName:9, subject:18, userName:19, yearOfPassing:20, _id:21, mobile:10,
      }; 
+    let condition =  staffRole ? {schoolUserName, instituteUserName, staffRole, isAvailable: true} : {schoolUserName, instituteUserName, isAvailable: true};
 
     if(!schoolUserName ) return res.status(403).json({success: false, message: 'Plese Provide schoolUserName'})
-
-    StaffModel.find({schoolUserName, instituteUserName, isAvailable: true}, projection).exec(function(err, staffList) {
+    StaffModel.find(condition, projection).exec(function(err, staffList) {
         if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Staff '})
         res.json({
             success: true,

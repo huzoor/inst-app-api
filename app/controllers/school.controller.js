@@ -171,13 +171,28 @@ const SchoolController = function () {
         })
       });
   }
+ 
+  const getRegSchoolsCount =  (req, res) => {
+    const instituteUserName =  req.headers['instituteusername']; 
+
+    SchoolModel.find({instituteUserName, isAvailable : true}).count((err, count)=>{
+      if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Schools '})
+      res.json({
+          success: true,
+          message: `Scools Count Retrieved successfully`,
+          count
+      })
+    })
+    
+  }
 
   return {
     addSchool,
     removeSchool,
     resetSchPassword,
     schAvailStaus,
-    getSchools
+    getSchools,
+    getRegSchoolsCount,
   }
 }
 module.exports = SchoolController;

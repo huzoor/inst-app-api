@@ -7,7 +7,7 @@ const appUtilMethods = function () {
         var transporter = nodemailer.createTransport({
         service: 'app3.bhashmail.com',
         auth: {
-            user: 'mschool@mavibatechnologies.com',
+            user: 'maviba@mavibatechnologies.com',
             pass: 'mail@123'
         }
         });

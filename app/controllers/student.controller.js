@@ -44,18 +44,18 @@ const StudentController = function () {
     if( !schoolUserName || !instituteUserName || !name|| !email|| !mobile|| !dob|| !rollNumber || 
         !fatherName||  !motherName|| !classEnrolled|| !city|| !district|| !state || !country) 
       return res.status(403).json({success: false, message: 'please provide all the fileds of student form'});
-    
+        
         let insertionDetails = { 
-            _id: new ObjectId(),
             name, dob, rollNumber, classEnrolled, schoolUserName, instituteUserName, 
             gender, logo: process.env.DEFAULT_IMAGE,   
             address, city, district, state, country, fatherName, motherName,
             userName: `${mobile}-STU`,  email, mobile, isAvailable : true,
-        }
+        }, 
+        insertionId = new ObjectId()
         
         if(formMode == 'create'){
           const password = `stu`;
-        StudentModel.create({...insertionDetails, password}, function(err, user) {
+        StudentModel.create({...insertionDetails, _id:insertionId, password}, function(err, user) {
             if (err) return res.status(403).json({success: false, message: 'Error in insertion', err, insertionDetails})
             console.log("1 document inserted");
             const messageText = `Thanks for adding Student. Your details as follows \nUserName : ${mobile}-STU  
@@ -79,8 +79,8 @@ const StudentController = function () {
           options = { multi: false };
       
           StudentModel.update(condition,update, options, function(err, user) {
-            if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
-            return res.json({  success: true, message: `${req.body.instituteName} Updated successfully!!`})
+            if (err) return res.status(403).json({success: false, message: 'Error in updatation', err})
+            return res.json({  success: true, message: `${req.body.name} details Updated successfully!!`})
           })
 
         }

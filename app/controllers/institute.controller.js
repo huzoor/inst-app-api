@@ -351,7 +351,6 @@ const InstituteController = function () {
             })
           } else res.status(403).json({success: false, message: 'Error in sending mail'})
           
-
   }
 
 
