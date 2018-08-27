@@ -9,6 +9,7 @@ var InstituteSchema = new Schema({
     code : String, 
     password: String,
     registeredDate : Date, 
+    schoolsRegistered : Number, 
     logo : String, 
     address : String, 
     city : String, 

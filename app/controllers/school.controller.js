@@ -1,5 +1,6 @@
 var jwt    = require('jsonwebtoken');
 const SchoolModel = require('../models/school.model');
+const InstituteModel = require('../models/institute.model');
 const ObjectId = require('mongoose').Types.ObjectId;
 const request = require('request');
 require('dotenv').config(); //importing node config
@@ -51,18 +52,18 @@ const SchoolController = function () {
       return res.status(403).json({success: false, message: 'please provide all the fileds of school form'});
       const  password = 'sch';
       let insertionDetails = { 
-        schoolName, 
-        instituteUserName,      
-        code, 
-        registeredDate, 
-        logo: process.env.DEFAULT_IMAGE,
-        address, city, district, state, country, 
-        schoolAdminName, 
-        userName: `${userName}-SCH`, 
-        email, 
-        mobile,
-        isAvailable: true,
-        };
+                                schoolName, 
+                                instituteUserName,      
+                                code, 
+                                registeredDate, 
+                                logo: process.env.DEFAULT_IMAGE,
+                                address, city, district, state, country, 
+                                schoolAdminName, 
+                                userName: `${userName}-SCH`, 
+                                email, 
+                                mobile,
+                                isAvailable: true,
+                              };
         // console.log(insertionDetails);
         if(formMode === 'create')
           SchoolModel.create({...insertionDetails, password}, function(err, user) {
@@ -75,6 +76,18 @@ const SchoolController = function () {
             request(endUrl, { json: true }, (mErr, mRes, mBody) => {
                 if (err) { return console.log(mErr); }
             });
+
+            SchoolModel.find({instituteUserName, isAvailable : true}).count((err, count)=>{
+              if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Schools '})
+              if(count > 0){
+                InstituteModel.update({userName: instituteUserName}, {schoolsRegistered: count}, {multi: false}, function(err, instUpdate) {
+                  if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+                  console.log(`instUpdated Successfully - ${instituteUserName}`, count);
+                })
+              }
+
+            })
+
 
             return res.json({  success: true, message: 'School inserted successfully!!'})
           })

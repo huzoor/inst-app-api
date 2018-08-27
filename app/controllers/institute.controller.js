@@ -48,7 +48,20 @@ const InstituteController = function () {
   }
 
   const addInstitute = (req,res) =>{
-    const { instituteName, code, registeredDate, address, city, district, state, country, userName, email, mobile, formMode } = req.body;
+    const { 
+              instituteName, 
+              code, 
+              registeredDate, 
+              address, 
+              city, 
+              district, 
+              state, 
+              country, 
+              userName, 
+              email, 
+              mobile, 
+              formMode 
+          } = req.body;
    
     if( !code || !registeredDate  || !address || !city || !state ||!country
         || !instituteName|| !userName || !email || !mobile || !formMode  ) 
@@ -61,11 +74,11 @@ const InstituteController = function () {
           logo: process.env.DEFAULT_IMAGE, 
           address,  city, district, state, country, 
           userName: `${userName}-INST`, email, mobile,
-          isAvailable: true
+          isAvailable: true,
         }
 
       if(formMode === 'create')
-        InstituteModel.create({...insertionDetails, password }, function(err, user) {
+        InstituteModel.create({...insertionDetails, password, schoolsRegistered: 0 }, function(err, user) {
           if (err) return res.status(403).json({success: false, message: 'Error in insertion', err})
           console.log("1 document inserted");
           
@@ -160,7 +173,7 @@ const InstituteController = function () {
 
   const getInstitutes =  (req, res) => {
     const projection = {                 
-                         instituteName : 1, code : 2, registeredDate : 3,  
+                         instituteName : 1, code : 2, registeredDate : 3, schoolsRegistered: 4, 
                          address : 5,  city : 6, district: 7, state : 8, country: 9, 
                          instituteAdminName : 9,  userName : 10, email : 12, 
                          mobile : 13, 
