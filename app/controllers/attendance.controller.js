@@ -1,4 +1,4 @@
-var jwt    = require('jsonwebtoken');
+let jwt    = require('jsonwebtoken');
 const AttendanceModel = require('../models/attendance.model');
 let _ = require('lodash');
 // const ObjectId = require('mongoose').Types.ObjectId;
@@ -91,15 +91,12 @@ const AttendanceController = function () {
               
               AttendanceModel.update(condition,update, options, function(err, updateInfo) {
                 if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
-                return res.json({  success: true, attendanceInfo, pulledInfo:info, updatedPresentiesList, newUpdatedPresentiesList, message: 'attendance updated successfully!!'})
+                return res.json({  success: true, message: 'attendance updated successfully!!'})
               })
             })
 
           }
         });
-
-
-
   }
 
   const getAttendance =  (req, res) => {
