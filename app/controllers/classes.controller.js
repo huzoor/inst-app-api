@@ -346,6 +346,25 @@ const ClassesController = function () {
         });
       }
 
+      const getStaffByClassId =  (req, res) => {
+        const schoolUserName =  req.headers['schoolusername'],
+              instituteUserName =  req.headers['instituteusername'],
+              calssId =  req.headers['classid'];
+    
+        if(!calssId ) return res.status(403).json({success: false, message: 'Plese Provide schoolUserName'})
+        
+        let condition =  {_id: ObjectId(calssId), instituteUserName, associatedWith:{ $elemMatch: { schoolUserName } }};
+        ClassesModel.findOne(condition).exec(function(err, staffInfo) {
+            if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Staff '})
+            if(staffInfo.associatedWith.length > 0){
+              let currentStf = staffInfo.associatedWith.filter((item)=> item.schoolUserName == schoolUserName)
+              
+              res.json({success: true, staffId: currentStf[0].staffId, message: `StaffId Found`})
+            } else  res.json({success: false, staffId: '', message:`No Staff Found`, staffInfo})
+            
+          });
+      }
+
   return {
     addClass,
     removeClass,
@@ -360,7 +379,8 @@ const ClassesController = function () {
     removeEntry,
     addAcadamicSetup,
     addStaffAcadamicSetup,
-    saveTimeTableInfo
+    saveTimeTableInfo,
+    getStaffByClassId
   }
 }
 module.exports = ClassesController;
