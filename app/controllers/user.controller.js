@@ -113,9 +113,9 @@ const UserController = function () {
           if(user[0] && user[0].classEnrolled) {
             let clsId = ObjectId(user[0].classEnrolled)
             ClaseesModel.findOne({_id: clsId}).exec(function(err, clsList) {
-              
+              console.log('clsList',clsList)
               let staffId=''
-              if(clsList.associatedWith.length>0){
+              if(clsList && clsList.associatedWith.length>0){
                   clsList.associatedWith.map((item, index)=>{
                     console.log('Compare', item.schoolUserName +""+ user[0].schoolUserName);
                     if(item.schoolUserName == user[0].schoolUserName)

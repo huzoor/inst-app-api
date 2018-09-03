@@ -303,8 +303,8 @@ const ClassesController = function () {
       const getSubjectsList = (req, res) => {
         const instituteUserName =  req.headers['instituteusername'];
         const classId =  req.headers['classid'] ;
-        // const schoolUserName =  req.headers['schoolusername'];
-        let condition = classId ? { instituteUserName, associatedWith:{ $elemMatch: { classId } } } : { instituteUserName };
+        const schoolUserName =  req.headers['schoolusername'] || '';
+        let condition = classId ? { instituteUserName, associatedWith:{ $elemMatch: { classId, schoolUserName } } } : { instituteUserName };
         SubjectsModel.find(condition).exec(function(err, Subjects) {
             if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Subjects ', err})
             res.json({success: true, Subjects })
@@ -327,9 +327,9 @@ const ClassesController = function () {
       const getHoursList = (req, res) => {
         const instituteUserName =  req.headers['instituteusername'];
         // const classId =  req.headers['classid'] ;
-        // const schoolUserName =  req.headers['schoolusername'];
+        const schoolUserName =  req.headers['schoolusername'];
         // let condition = classId ? { instituteUserName, associatedWith:{ $elemMatch: { classId } } } : { instituteUserName };
-        HoursModel.find({instituteUserName}).exec(function(err, hoursList) {
+        HoursModel.find({instituteUserName, schoolUserName}).exec(function(err, hoursList) {
             if (err)  return res.status(403).json({success: false, message: 'Error in retrieving hoursList ', err})
             res.json({success: true, hoursList })
         });
@@ -356,11 +356,11 @@ const ClassesController = function () {
         let condition =  {_id: ObjectId(calssId), instituteUserName, associatedWith:{ $elemMatch: { schoolUserName } }};
         ClassesModel.findOne(condition).exec(function(err, staffInfo) {
             if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Staff '})
-            if(staffInfo.associatedWith.length > 0){
+            if(staffInfo &&  staffInfo.associatedWith.length > 0){
               let currentStf = staffInfo.associatedWith.filter((item)=> item.schoolUserName == schoolUserName)
               
               res.json({success: true, staffId: currentStf[0].staffId, message: `StaffId Found`})
-            } else  res.json({success: false, staffId: '', message:`No Staff Found`, staffInfo})
+            } else  res.json({success: false, staffId: '', message:`No Staff Found`})
             
           });
       }
