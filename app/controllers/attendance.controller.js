@@ -74,10 +74,10 @@ const AttendanceController = function () {
         } else  {
           // console.log('attendanceInfo', attendanceInfo);
           
-          let updatedPresentiesList = attendanceInfo.presentiesList.filter(i => i.classCode == classCode)
-                                                                   .filter(i => i.subjectCode !== subjectCode);
+          // let updatedPresentiesList = attendanceInfo.presentiesList.filter(i => i.classCode == classCode)
+                                                                  //  .filter(i => i.subjectCode !== subjectCode);
           
-          // let updatedPresentiesList = attendanceInfo.presentiesList.filter(i => i.classCode !== classCode || i.subjectCode !== subjectCode);
+          let updatedPresentiesList = attendanceInfo.presentiesList.filter(i => !(i.classCode == classCode && i.subjectCode == subjectCode));
           
           // console.log('updatedPresentiesList', updatedPresentiesList)
           let newUpdatedPresentiesList = [
@@ -91,7 +91,7 @@ const AttendanceController = function () {
               
               AttendanceModel.update(condition,update, options, function(err, updateInfo) {
                 if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
-                return res.json({  success: true, message: 'attendance updated successfully!!'})
+                return res.json({  success: true, message: 'attendance updated successfully!!', newUpdatedPresentiesList, updatedPresentiesList, pL: attendanceInfo.presentiesList})
               })
             })
 
@@ -106,14 +106,17 @@ const AttendanceController = function () {
     const subjectCode =  req.headers['subjectcode'];
     const createdOn =  req.headers['createdon'];  
     // console.log('INfo On', {createdOn, instituteUserName, schoolUserName,classCode, subjectCode})
-    let finder = { createdOn, instituteUserName, schoolUserName, 'presentiesList':{$elemMatch: {classCode, subjectCode} }}
+    let finder = { createdOn, instituteUserName, schoolUserName }
+    if(subjectCode && classCode)
+       finder = { createdOn, instituteUserName, schoolUserName, 'presentiesList':{$elemMatch: {classCode, subjectCode} }}
 
-    if(!schoolUserName || !instituteUserName ||!classCode ||!subjectCode ||!createdOn )  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
+    if(!schoolUserName || !instituteUserName ||!createdOn )  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
     AttendanceModel.find(finder).sort({createdOn: -1}).exec(function(err, attendanceInfo) {
         if (err)  return res.status(403).json({success: false, message: 'Error in retrieving attendanceInfo '})
         res.json({
             success: true,
-            attendanceInfo
+            attendanceInfo,
+            finder
         })
       });
   }

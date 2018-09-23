@@ -290,8 +290,8 @@ const ClassesController = function () {
 
       const getClassesList = (req, res) => {
         const instituteUserName =  req.headers['instituteusername'];
-        // const schoolUserName =  req.headers['schoolusername'];
-        let condition =  { instituteUserName }; 
+        const schoolUserName =  req.headers['schoolusername'];
+        let condition = schoolUserName ?  { instituteUserName, associatedWith:{ $elemMatch: { schoolUserName } } } : { instituteUserName }; 
 
         ClassesModel.find(condition).exec(function(err, Classes) {
             if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Classes '})
