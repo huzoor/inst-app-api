@@ -51,7 +51,7 @@ const StudentController = function () {
             address, city, district, state, country, fatherName, motherName,
             userName: `${mobile}-STU`,  email, mobile, isAvailable : true,
         }, 
-        insertionId = new ObjectId()
+        insertionId = new ObjectId();
         
         if(formMode == 'create'){
           const password = `stu`;
@@ -176,11 +176,27 @@ const StudentController = function () {
         })
       });
   }
+  const getStudentsListByClass =  (req, res) => {
+    const calssId =  req.headers['classid'];
+
+    if(!calssId)  return res.status(403).json({success: false, message: 'Plese Provide School Name & institue Name'})
+    
+    let finder =  { classEnrolled: ObjectId(calssId), isAvailable : true };
+    StudentModel.find(finder).count().exec(function(err, studentsCount) {
+        if (err)  return res.status(403).json({success: false, message: 'Error in retrieving Students count'})
+        res.json({
+            success: true,
+            studentsCount,
+         
+        })
+      });
+  }
 
   return {
     addStudent,
     getStudentsList,
     getStudentsListById,
+    getStudentsListByClass,
     removeStudent,
     stuAvailStaus,
     resetStuPassword

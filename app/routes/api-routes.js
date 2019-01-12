@@ -28,6 +28,7 @@ var routes = function(){
     router.get('/getStaffList', StaffController.getStaffList);
     router.get('/getStudentsList', StudentController.getStudentsList);
     router.get('/getStudentsListById', StudentController.getStudentsListById);
+    router.get('/getStudentsListByClass', StudentController.getStudentsListByClass);
     router.get('/getTimelineEvents', TimelineController.getTimelineEvents);
     router.get('/getLeavesList', LeaveController.getLeavesList);
     router.get('/getAttendance', AttendanceController.getAttendance);
@@ -91,6 +92,8 @@ var routes = function(){
     
     router.get('/sendTestEmail', InstituteController.sendTestEmail);  
     router.get('/createBackup', BackupController.createBackup);  
+    
+    router.post('/bulkUpload', BackupController.bulkUpload);  
     
     
       

@@ -80,9 +80,9 @@ const StaffController = function () {
           options = { multi: false };
       
           StaffModel.update(condition,update, options, function(err, user) {
-        if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
-        return res.json({  success: true, message: `${req.body.userName} Updated successfully!!`})
-      })
+            if (err) return res.status(403).json({success: false, message: 'Error in updatation'})
+            return res.json({  success: true, message: `${req.body.userName} Updated successfully!!`})
+          })
 
         }
       

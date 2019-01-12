@@ -1,6 +1,7 @@
 const express = require('express'); 
 const app = express();
 var bodyParser  = require('body-parser');
+const fileUpload = require('express-fileupload');
 var path=require('path');
 const db = require('./dbConnection');
 const cron = require('node-cron');
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded({ extended: false })); // to support URL-encoded bodies
+app.use(fileUpload()); // to upload basic file , used in bulkupload method
 
 // Add headers to allow access region
 app.use(function (req, res, next) {
